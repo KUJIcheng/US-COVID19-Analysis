@@ -197,26 +197,27 @@
   </div>
 
   <div class="text-box">
-    <h2>在这里说点什么，解释一下啥的</h2>
-    <h2>比如说疫情发展的大致情况和趋势</h2>
+    <h2>Explain some trends and details in the map to users.</h2>
+    <h2>Then lead to the next visualization, using a line chart to observe the changing trend of covid.</h2>
   </div>
 
   <div class="visualization">
+    <h2>Here will be an interactive line chart to observe the changing trends of each state's covid data over time.</h2>
     <svg bind:this={svg2} width="100%" height="98%"></svg>
   </div>
 
   <div class="text-box">
-    <h2>在这里说点什么，解释一下啥的</h2>
-    <h2>比如说功能描述或者其他的，背景颜色啥的后期还可以改，不着急</h2>
+    <h2>Here we describe some of the content of the above line chart, and then lead to our next visualization below, which is a line chart about the rate of change of mortality.</h2>
+    <h2>the text box background can be edit to have a better look</h2>
   </div>
 
   <div class="visualization">
-    <h2>Visualization 3</h2>
+    <h2>Here will be a line chart here to show how the change rate of mortality changes over time to show the changing trend of the harm of COVID19.</h2>
     <!-- 可视化组件3将放置在这里 -->
   </div>
 
   <div class="text-box">
-    <h1>在这里说点结论啥的</h1>
+    <h1>Draw the conclusion here.</h1>
   </div>
 </div>
 
