@@ -11,9 +11,9 @@
   let dates = [];
   let selectedDateIndex = 0;
   let selectedDateString = '';
-  let maxCases = 0;
-  let lastColorByState = {};
 
+  let lastColorByState = {};
+  let maxCases = 0; // 数据集中最大的case数
   let maxDeaths = 0; // 数据集中的最大死亡人数
   let maxMortalityRate = 0; // 数据集中的最大死亡率 
 
@@ -27,6 +27,7 @@
     const data = await csv('daily_data.csv');
     const monthData = await csv('monthly_data.csv');
 
+    // 读取每日的数据以及处理部分 <<---------
     data.forEach(d => {
       if (!dataByStateAndDate[d.date]) {
         dataByStateAndDate[d.date] = {};
@@ -37,7 +38,7 @@
       const mortalityRate = +d.mortality_rate;
 
       // 存储每个日期下每个州的详细信息
-      dataByStateAndDate[d.date][d.state] = { cases, deaths, mortalityRate };
+      dataByStateAndDate[d.date][d.state] = {cases, deaths, mortalityRate};
 
       // 更新最大值
       if (cases > maxCases) maxCases = cases;
@@ -47,6 +48,7 @@
 
     dates = Object.keys(dataByStateAndDate).sort((a, b) => new Date(a) - new Date(b));
     selectedDateString = dates[selectedDateIndex];
+
     renderMap(us);
   });
 
@@ -84,7 +86,7 @@
     d3.select(svg1).selectAll('.state')
       .attr('fill', function(d) {
         const stateName = d.properties.name;
-        // 此处修改为从对象中提取cases
+        
         const stateData = casesByState[stateName];
         if (stateData && stateData.cases !== undefined) {
           const color = calculateColor(stateData.cases);
@@ -117,7 +119,7 @@
       const mortalityRate = stateData ? stateData.mortalityRate : 0; // 默认死亡率为0
 
       // 使用比例确定圆的半径和颜色
-      const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, 30])(deaths) : 1; // 如果没有死亡数，使用默认大小1
+      const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, 30])(deaths) : 0; // 如果没有死亡数，使用默认大小1
       const color = mortalityRate ? d3.scaleLinear().domain([0, 6]).range(["lightgrey", "black"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
 
       d3.select(svg1).append("circle")
@@ -125,7 +127,7 @@
         .attr("cy", center[1])
         .attr("r", radius)
         .attr("fill", color)
-        .attr("fill-opacity", 0.5) // 设置半透明
+        .attr("fill-opacity", 0.75) // 设置半透明
         .attr("stroke", "none"); // 无边框
     });
   }
@@ -165,6 +167,10 @@
     playing = false; // 更新播放状态
   }
 
+  //绘制折线图的代码 <<---------
+
+  
+
   // 进度条的更新设置 <<---------
   $: selectedDateString = dates[selectedDateIndex]; // 先更新selectedDateString
 
@@ -202,7 +208,7 @@
   </div>
 
   <div class="visualization">
-    <h2>Here will be an interactive line chart to observe the changing trends of each state's covid data over time.</h2>
+    
     <svg bind:this={svg2} width="100%" height="98%"></svg>
   </div>
 
@@ -238,7 +244,7 @@
 
   .visualization {
     width: 70vw; /* 页面宽度的70% */
-    height: 63vh; /* 视口高度的50% */
+    height: 66vh; /* 视口高度的50% */
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 1rem;
@@ -274,7 +280,8 @@
   /* 媒体查询，用于小屏幕的样式调整 */
   @media (max-width: 600px) {
     .visualization {
-      width: 90%; /* 小屏幕上的宽度调整 */
+      width: 70%; /* 小屏幕上的宽度调整 */
+      height: 63%
     }
   }
 </style>
