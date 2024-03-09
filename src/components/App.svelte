@@ -15,17 +15,19 @@
   let lastColorByState = {};
   let maxCases = 0; // 数据集中最大的case数
   let maxDeaths = 0; // 数据集中的最大死亡人数
-  let maxMortalityRate = 0; // 数据集中的最大死亡率 
+  let maxMortalityRate = 0; // 数据集中的最大死亡率
 
   let us = null;
   let projection = null;
+
+  let selectedState = 'Washington';
 
   //----------加载数据区域 ----------//
 
   onMount(async () => {
     us = await d3.json('states-10m.json');
-    const data = await csv('daily_data.csv');
-    const monthData = await csv('monthly_data.csv');
+    const data = await csv('daily_data_complete.csv');
+    // const monthData = await csv('monthly_data.csv');
 
     // 读取每日的数据以及处理部分 <<---------
     data.forEach(d => {
@@ -36,9 +38,19 @@
       const cases = +d.cases;
       const deaths = +d.deaths;
       const mortalityRate = +d.mortality_rate;
+      const casesGrowthRate = +d.cases_growth_rate;
+      const deathsGrowthRate = +d.deaths_growth_rate;
+      const mortalityRateChange = +d.mortality_rate_change;
 
       // 存储每个日期下每个州的详细信息
-      dataByStateAndDate[d.date][d.state] = {cases, deaths, mortalityRate};
+      dataByStateAndDate[d.date][d.state] = {
+        cases, 
+        deaths, 
+        mortalityRate,
+        casesGrowthRate,
+        deathsGrowthRate,
+        mortalityRateChange
+      };
 
       // 更新最大值
       if (cases > maxCases) maxCases = cases;
@@ -50,6 +62,7 @@
     selectedDateString = dates[selectedDateIndex];
 
     renderMap(us);
+    renderLineChart(selectedState);
   });
 
 //----------function 区域 ----------//
@@ -168,9 +181,83 @@
   }
 
   //绘制折线图的代码 <<---------
+  function renderLineChart(selectedState) {
+  const margin = { top: 20, right: 80, bottom: 30, left: 50 },
+        width = svg2.clientWidth - margin.left - margin.right,
+        height = svg2.clientHeight - margin.top - margin.bottom;
+
+  // 清空之前的绘图
+  d3.select(svg2).selectAll('*').remove();
+
+  const svg = d3.select(svg2)
+                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // 数据处理，包括每一天的数据和死亡率
+  const data = Object.entries(dataByStateAndDate)
+    .map(([date, statesData]) => {
+      const { cases, mortality_rate } = statesData[selectedState] || {};
+      return {
+        date: d3.timeParse("%Y-%m-%d")(date),
+        cases,
+        mortalityRate: mortality_rate / 100 // 如果死亡率以百分比形式给出，转换为小数
+      };
+    })
+    .sort((a, b) => a.date - b.date); // 按日期排序
+
+  // 创建比例尺
+  const xScale = d3.scaleTime().range([0, width]).domain(d3.extent(data, d => d.date));
+  const yScaleLeft = d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, d => d.cases)]);
+  const yScaleRight = d3.scaleLinear().range([height, 0]).domain([0, maxMortalityRate/100]);
+
+  // 定义左侧y轴和右侧y轴
+  const yAxisLeft = d3.axisLeft(yScaleLeft);
+  const yAxisRight = d3.axisRight(yScaleRight).tickFormat(d3.format(".0%"));
+
+  // 绘制轴
+  svg.append("g")
+     .attr("transform", `translate(0, ${height})`)
+     .call(d3.axisBottom(xScale));
+
+  svg.append("g")
+     .call(yAxisLeft);
+
+  svg.append("g")
+     .attr("transform", `translate(${width}, 0)`)
+     .call(yAxisRight);
+
+  // 线条生成器 for cases
+  const lineCases = d3.line()
+                      .defined(d => !isNaN(d.cases))
+                      .x(d => xScale(d.date))
+                      .y(d => yScaleLeft(d.cases));
+
+  // 线条生成器 for mortalityRate
+  const lineMortalityRate = d3.line()
+                              .defined(d => !isNaN(d.mortalityRate))
+                              .x(d => xScale(d.date))
+                              .y(d => yScaleRight(d.mortalityRate));
+
+  // 绘制cases线条
+  svg.append("path")
+     .data([data])
+     .attr("class", "line")
+     .style("stroke", "red")
+     .style("fill", "none")
+     .attr("d", lineCases);
+
+  // 绘制mortalityRate线条
+  svg.append("path")
+     .data([data])
+     .attr("class", "line mortality-rate")
+     .style("stroke", "blue")
+     .style("fill", "none")
+     .attr("d", lineMortalityRate);
+  }
+
 
   
-
   // 进度条的更新设置 <<---------
   $: selectedDateString = dates[selectedDateIndex]; // 先更新selectedDateString
 
