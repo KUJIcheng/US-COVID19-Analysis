@@ -132,8 +132,8 @@
       const mortalityRate = stateData ? stateData.mortalityRate : 0; // 默认死亡率为0
 
       // 使用比例确定圆的半径和颜色
-      const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, 30])(deaths) : 0; // 如果没有死亡数，使用默认大小1
-      const color = mortalityRate ? d3.scaleLinear().domain([0, 6]).range(["lightgrey", "black"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
+      const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, 30])(deaths) : 0; // 如果没有死亡数，使用默认大小0
+      const color = mortalityRate ? d3.scaleLinear().domain([0, 0.06]).range(["lightgrey", "black"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
 
       d3.select(svg1).append("circle")
         .attr("cx", center[0])
@@ -182,82 +182,158 @@
 
   //绘制折线图的代码 <<---------
   function renderLineChart(selectedState) {
-  const margin = { top: 20, right: 80, bottom: 30, left: 50 },
-        width = svg2.clientWidth - margin.left - margin.right,
-        height = svg2.clientHeight - margin.top - margin.bottom;
+    const margin = { top: 20, right: 80, bottom: 30, left: 80 },
+          width = svg2.clientWidth - margin.left - margin.right,
+          height = svg2.clientHeight - margin.top - margin.bottom;
 
-  // 清空之前的绘图
-  d3.select(svg2).selectAll('*').remove();
+    // 清空之前的绘图
+    d3.select(svg2).selectAll('*').remove();
 
-  const svg = d3.select(svg2)
-                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-                .append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select(svg2)
+                  .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                  .append("g")
+                  .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // 数据处理，包括每一天的数据和死亡率
-  const data = Object.entries(dataByStateAndDate)
-    .map(([date, statesData]) => {
-      const { cases, mortality_rate } = statesData[selectedState] || {};
-      return {
-        date: d3.timeParse("%Y-%m-%d")(date),
-        cases,
-        mortalityRate: mortality_rate / 100 // 如果死亡率以百分比形式给出，转换为小数
-      };
-    })
-    .sort((a, b) => a.date - b.date); // 按日期排序
+    // 数据处理，包括每一天的数据和死亡率
+    const data = Object.entries(dataByStateAndDate)
+      .map(([date, statesData]) => {
+        const { cases, mortalityRate } = statesData[selectedState] || {};
+        return {
+          date: d3.timeParse("%Y-%m-%d")(date),
+          cases,
+          mortalityRate // 如果死亡率以百分比形式给出，转换为小数
+        };
+      })
+      .sort((a, b) => a.date - b.date); // 按日期排序
 
-  // 创建比例尺
-  const xScale = d3.scaleTime().range([0, width]).domain(d3.extent(data, d => d.date));
-  const yScaleLeft = d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, d => d.cases)]);
-  const yScaleRight = d3.scaleLinear().range([height, 0]).domain([0, maxMortalityRate/100]);
+    // 创建比例尺
+    const xScale = d3.scaleTime().range([0, width]).domain(d3.extent(data, d => d.date));
+    const yScaleLeft = d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, d => d.cases)]);
+    const yScaleRight = d3.scaleLinear().range([height, 0]).domain([0, maxMortalityRate]);
 
-  // 定义左侧y轴和右侧y轴
-  const yAxisLeft = d3.axisLeft(yScaleLeft);
-  const yAxisRight = d3.axisRight(yScaleRight).tickFormat(d3.format(".0%"));
+    // 定义左侧y轴和右侧y轴
+    const yAxisLeft = d3.axisLeft(yScaleLeft);
+    const yAxisRight = d3.axisRight(yScaleRight).tickFormat(d3.format(".0%"));
 
-  // 绘制轴
-  svg.append("g")
-     .attr("transform", `translate(0, ${height})`)
-     .call(d3.axisBottom(xScale));
+    // 绘制轴
+    svg.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(xScale));
 
-  svg.append("g")
-     .call(yAxisLeft);
+    svg.append("g")
+      .call(yAxisLeft);
 
-  svg.append("g")
-     .attr("transform", `translate(${width}, 0)`)
-     .call(yAxisRight);
+    svg.append("g")
+      .attr("transform", `translate(${width}, 0)`)
+      .call(yAxisRight);
 
-  // 线条生成器 for cases
-  const lineCases = d3.line()
-                      .defined(d => !isNaN(d.cases))
-                      .x(d => xScale(d.date))
-                      .y(d => yScaleLeft(d.cases));
+    // 线条生成器 for cases
+    const lineCases = d3.line()
+                        .defined(d => !isNaN(d.cases))
+                        .x(d => xScale(d.date))
+                        .y(d => yScaleLeft(d.cases));
 
-  // 线条生成器 for mortalityRate
-  const lineMortalityRate = d3.line()
-                              .defined(d => !isNaN(d.mortalityRate))
-                              .x(d => xScale(d.date))
-                              .y(d => yScaleRight(d.mortalityRate));
+    // 线条生成器 for mortalityRate
+    const lineMortalityRate = d3.line()
+                                .defined(d => !isNaN(d.mortalityRate))
+                                .x(d => xScale(d.date))
+                                .y(d => yScaleRight(d.mortalityRate));
 
-  // 绘制cases线条
-  svg.append("path")
-     .data([data])
-     .attr("class", "line")
-     .style("stroke", "red")
-     .style("fill", "none")
-     .attr("d", lineCases);
+    // 绘制cases线条
+    svg.append("path")
+      .data([data])
+      .attr("class", "line cases-line")
+      .style("stroke", "red") // 初始颜色
+      .style("fill", "none")
+      .style("stroke-width", "3px")
+      .attr("d", lineCases); // 使用更平滑的曲线生成器
 
-  // 绘制mortalityRate线条
-  svg.append("path")
-     .data([data])
-     .attr("class", "line mortality-rate")
-     .style("stroke", "blue")
-     .style("fill", "none")
-     .attr("d", lineMortalityRate);
+    // 绘制mortalityRate线条
+    svg.append("path")
+      .data([data])
+      .attr("class", "line mortality-rate-line")
+      .style("stroke", "grey") // 初始颜色
+      .style("fill", "none")
+      .style("stroke-width", "3px")
+      .attr("d", lineMortalityRate); // 使用更平滑的曲线生成器
+
+    // 做灰色的线的代码
+    // 添加一个透明的矩形覆盖整个SVG来捕捉鼠标事件
+    svg.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "none")
+      .attr("pointer-events", "all")
+      .on("mousemove", mousemove)
+      .on("mouseout", mouseout);
+
+    // 添加垂直线并调整粗细
+    const focusLine = svg.append("line")
+      .style("stroke", "lightgrey")
+      .style("stroke-width", "2px") // 线的粗细
+      .style("opacity", 0);
+
+    // 调整空心圆的大小
+    const focusCircleCases = svg.append("circle")
+      .style("fill", "none")
+      .style("stroke", "red")
+      .attr("r", 6) // 圆的半径
+      .style("opacity", 0);
+
+    const focusCircleMortalityRate = svg.append("circle")
+      .style("fill", "none")
+      .style("stroke", "grey")
+      .attr("r", 6) // 圆的半径
+      .style("opacity", 0);
+
+    // 为显示数据创建tooltip元素
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+    function mousemove(event) {
+      const mouseX = d3.pointer(event, this)[0]; // 获取鼠标在SVG内的x坐标
+      const date = xScale.invert(mouseX); // 将x坐标转换回日期
+        
+      // 找到最接近鼠标位置的日期对应的数据点
+      const index = d3.bisector(d => d.date).left(data, date, 1);
+      const a = data[index - 1];
+      const b = data[index];
+      const d = b && (date - a.date > b.date - date) ? b : a;
+
+      focusLine.attr("x1", xScale(d.date))
+                .attr("x2", xScale(d.date))
+                .attr("y1", 0)
+                .attr("y2", height)
+                .style("opacity", 1);
+
+      focusCircleCases.attr("cx", xScale(d.date))
+                      .attr("cy", yScaleLeft(d.cases))
+                      .style("opacity", 1);
+
+      focusCircleMortalityRate.attr("cx", xScale(d.date))
+                              .attr("cy", yScaleRight(d.mortalityRate))
+                              .style("opacity", 1);
+
+      tooltip.html(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}<br/>Cases: ${d.cases}<br/>Mortality Rate: ${(d.mortalityRate * 100).toFixed(2)}%`)
+            .style("left", (event.pageX + 1) + "px")
+            .style("top", (event.pageY - 1) + "px");
+      
+      focusLine.style("opacity", 1);
+      focusCircleCases.style("opacity", 1);
+      focusCircleMortalityRate.style("opacity", 1);
+    }
+
+    function mouseout() {
+      focusLine.style("opacity", 0);
+      focusCircleCases.style("opacity", 0);
+      focusCircleMortalityRate.style("opacity", 0);
+      tooltip.style("opacity", 0);
+    }
   }
 
 
-  
+
   // 进度条的更新设置 <<---------
   $: selectedDateString = dates[selectedDateIndex]; // 先更新selectedDateString
 
