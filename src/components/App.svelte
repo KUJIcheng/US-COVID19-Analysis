@@ -20,7 +20,18 @@
   let us = null;
   let projection = null;
 
-  let selectedState = 'Washington';
+  let selectedState = 'California';
+  let states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 
+  'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 
+  'District of Columbia', 'Florida', 'Georgia', 'Guam', 'Hawaii', 
+  'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 
+  'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 
+  'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 
+  'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 
+  'North Carolina', 'North Dakota', 'Northern Mariana Islands', 'Ohio', 
+  'Oklahoma', 'Oregon', 'Pennsylvania', 'Puerto Rico', 'Rhode Island', 
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 
+  'Virgin Islands', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
 
   //----------加载数据区域 ----------//
 
@@ -132,7 +143,7 @@
       const mortalityRate = stateData ? stateData.mortalityRate : 0; // 默认死亡率为0
 
       // 使用比例确定圆的半径和颜色
-      const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, 30])(deaths) : 0; // 如果没有死亡数，使用默认大小0
+      const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, svg1.clientHeight * 0.06])(deaths) : 0; // 如果没有死亡数，使用默认大小0
       const color = mortalityRate ? d3.scaleLinear().domain([0, 0.06]).range(["lightgrey", "black"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
 
       d3.select(svg1).append("circle")
@@ -194,22 +205,25 @@
                   .append("g")
                   .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // 数据处理，包括每一天的数据和死亡率
-    const data = Object.entries(dataByStateAndDate)
+    // 数据处理，选择每个月23号的数据
+    const filteredData = Object.entries(dataByStateAndDate)
+      .filter(([date]) => {
+        const day = new Date(date).getDate();
+        return day === 23; // 仅选择每月23号的数据
+      })
       .map(([date, statesData]) => {
-        const { cases, mortalityRate } = statesData[selectedState] || {};
+        const { cases, mortalityRate } = statesData[selectedState] || { cases: 0, mortalityRate: 0 };
         return {
           date: d3.timeParse("%Y-%m-%d")(date),
           cases,
-          mortalityRate // 如果死亡率以百分比形式给出，转换为小数
+          mortalityRate
         };
-      })
-      .sort((a, b) => a.date - b.date); // 按日期排序
+      });
 
     // 创建比例尺
-    const xScale = d3.scaleTime().range([0, width]).domain(d3.extent(data, d => d.date));
-    const yScaleLeft = d3.scaleLinear().range([height, 0]).domain([0, d3.max(data, d => d.cases)]);
-    const yScaleRight = d3.scaleLinear().range([height, 0]).domain([0, maxMortalityRate]);
+    const xScale = d3.scaleTime().range([0, width]).domain(d3.extent(filteredData, d => d.date));
+    const yScaleLeft = d3.scaleLinear().range([height, 0]).domain([0, d3.max(filteredData, d => d.cases)]);
+    const yScaleRight = d3.scaleLinear().range([height, 0]).domain([0, 0.1]);
 
     // 定义左侧y轴和右侧y轴
     const yAxisLeft = d3.axisLeft(yScaleLeft);
@@ -229,33 +243,35 @@
 
     // 线条生成器 for cases
     const lineCases = d3.line()
-                        .defined(d => !isNaN(d.cases))
-                        .x(d => xScale(d.date))
-                        .y(d => yScaleLeft(d.cases));
+                    .defined(d => !isNaN(d.cases))
+                    .curve(d3.curveMonotoneX)
+                    .x(d => xScale(d.date))
+                    .y(d => yScaleLeft(d.cases));
 
     // 线条生成器 for mortalityRate
     const lineMortalityRate = d3.line()
                                 .defined(d => !isNaN(d.mortalityRate))
+                                .curve(d3.curveMonotoneX)
                                 .x(d => xScale(d.date))
                                 .y(d => yScaleRight(d.mortalityRate));
 
     // 绘制cases线条
     svg.append("path")
-      .data([data])
+      .data([filteredData])
       .attr("class", "line cases-line")
-      .style("stroke", "red") // 初始颜色
+      .style("stroke", "#CB4335")
       .style("fill", "none")
       .style("stroke-width", "3px")
-      .attr("d", lineCases); // 使用更平滑的曲线生成器
+      .attr("d", lineCases);
 
     // 绘制mortalityRate线条
     svg.append("path")
-      .data([data])
+      .data([filteredData])
       .attr("class", "line mortality-rate-line")
-      .style("stroke", "grey") // 初始颜色
+      .style("stroke", "#5B2C6F")
       .style("fill", "none")
       .style("stroke-width", "3px")
-      .attr("d", lineMortalityRate); // 使用更平滑的曲线生成器
+      .attr("d", lineMortalityRate);
 
     // 做灰色的线的代码
     // 添加一个透明的矩形覆盖整个SVG来捕捉鼠标事件
@@ -269,36 +285,32 @@
 
     // 添加垂直线并调整粗细
     const focusLine = svg.append("line")
-      .style("stroke", "lightgrey")
+      .style("stroke", "#5D6D7E")
       .style("stroke-width", "2px") // 线的粗细
       .style("opacity", 0);
 
     // 调整空心圆的大小
     const focusCircleCases = svg.append("circle")
       .style("fill", "none")
-      .style("stroke", "red")
-      .attr("r", 6) // 圆的半径
+      .style("stroke", "#CB4335")
+      .attr("r", 7) // 圆的半径
       .style("opacity", 0);
 
     const focusCircleMortalityRate = svg.append("circle")
       .style("fill", "none")
-      .style("stroke", "grey")
-      .attr("r", 6) // 圆的半径
+      .style("stroke", "#5B2C6F")
+      .attr("r", 7) // 圆的半径
       .style("opacity", 0);
-
-    // 为显示数据创建tooltip元素
-    const tooltip = d3.select("body").append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
+    
+    // 鼠标在第二个图移动的时候的交互行为代码在这里 <<---------
     function mousemove(event) {
       const mouseX = d3.pointer(event, this)[0]; // 获取鼠标在SVG内的x坐标
       const date = xScale.invert(mouseX); // 将x坐标转换回日期
         
       // 找到最接近鼠标位置的日期对应的数据点
-      const index = d3.bisector(d => d.date).left(data, date, 1);
-      const a = data[index - 1];
-      const b = data[index];
+      const index = d3.bisector(d => d.date).left(filteredData, date, 1);
+      const a = filteredData[index - 1];
+      const b = filteredData[index];
       const d = b && (date - a.date > b.date - date) ? b : a;
 
       focusLine.attr("x1", xScale(d.date))
@@ -314,25 +326,67 @@
       focusCircleMortalityRate.attr("cx", xScale(d.date))
                               .attr("cy", yScaleRight(d.mortalityRate))
                               .style("opacity", 1);
-
-      tooltip.html(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}<br/>Cases: ${d.cases}<br/>Mortality Rate: ${(d.mortalityRate * 100).toFixed(2)}%`)
-            .style("left", (event.pageX + 1) + "px")
-            .style("top", (event.pageY - 1) + "px");
       
       focusLine.style("opacity", 1);
       focusCircleCases.style("opacity", 1);
       focusCircleMortalityRate.style("opacity", 1);
+
+      // 根据找到的数据点更新信息框内容和位置
+      const formatDate = d3.timeFormat("%Y-%m");
+      const infoContent = [
+        `Date: ${formatDate(d.date)}`,
+        `Cases: ${d.cases}`,
+        `Mortality Rate: ${(d.mortalityRate * 100).toFixed(2)}%`
+      ]; // 使用数组来组织每一行的内容
+      infoText.text(""); // 清除旧文本内容
+      infoContent.forEach((line, index) => {
+        // 为每行文本添加tspan元素，确保没有多余的空格
+        infoText.append("tspan")
+                .attr("x", 10) // 控制文本靠左对齐，可以根据实际情况调整
+                .attr("y", 20 + index * 20) // 调整行间距
+                .text(line.trim()); // 使用trim()确保每行前后没有多余的空格
+      });
+
+      infoBox.style("display", null) // 显示信息框
+           .attr("transform", `translate(${mouseX - 90}, ${svg1.clientHeight * 0.4})`); // 调整信息框位置
     }
 
     function mouseout() {
       focusLine.style("opacity", 0);
       focusCircleCases.style("opacity", 0);
       focusCircleMortalityRate.style("opacity", 0);
-      tooltip.style("opacity", 0);
+      infoBox.style("display", "none"); // 隐藏信息框
     }
+
+    // 在SVG中添加一个分组容器用于显示信息框
+    const infoBox = svg.append("g")
+                      .style("display", "none"); // 初始状态不显示
+
+    // 在信息框内添加白色半透明的矩形作为背景
+    infoBox.append("rect")
+          .attr("width", 180) // 根据需要调整大小
+          .attr("height", 70) // 根据需要调整大小
+          .attr("fill", "lightgrey")
+          .attr("fill-opacity", 0.7)
+          .attr("rx", 3) // 圆角大小
+          .attr("ry", 5);
+
+    // 在信息框内添加文本元素显示信息
+    const infoText = infoBox.append("text")
+                            .attr("x", 5) // 文本与矩形边缘的距离
+                            .attr("y", 20) // 初始文本位置
+                            .attr("fill", "black");
+                            svg.append("g")
+    .attr("class", "grid")
+    .call(d3.axisLeft(yScaleLeft)
+        .tickSize(-width)
+        .tickFormat("")
+    )
+    .attr("stroke-opacity", 0.2)
+    .attr("stroke-dasharray", "2,2");
   }
 
-
+  
 
   // 进度条的更新设置 <<---------
   $: selectedDateString = dates[selectedDateIndex]; // 先更新selectedDateString
@@ -340,6 +394,11 @@
   $: if (selectedDateString) {
       updateMapColors(); // 根据最新的selectedDateString更新颜色
       updateCircles();   // 更新圆
+  }
+
+  // 选择不同的州呈现折线图的更新设置<<---------
+  $: if (selectedState && svg2) {
+  renderLineChart(selectedState);
   }
 </script>
 
@@ -371,10 +430,17 @@
   </div>
 
   <div class="visualization">
-    
     <svg bind:this={svg2} width="100%" height="98%"></svg>
   </div>
 
+  <div class="controls">
+    <select bind:value={selectedState} class="state-selector">
+      {#each states as state}
+        <option value="{state}">{state}</option>
+      {/each}
+    </select>
+  </div>
+  
   <div class="text-box">
     <h2>Here we describe some of the content of the above line chart, and then lead to our next visualization below, which is a line chart about the rate of change of mortality.</h2>
     <h2>the text box background can be edit to have a better look</h2>
@@ -440,11 +506,18 @@
   margin-right: 3%; /* bottom和日期的间距 */
   }
 
+  .state-selector {
+    width: 100%; /* 放大选择框 */
+    max-width: 400px; /* 最大宽度 */
+    height: 40px; /* 增加高度 */
+    font-size: 16px; /* 字体大小 */
+    margin: 20px auto; /* 居中显示 */
+  }
+
   /* 媒体查询，用于小屏幕的样式调整 */
   @media (max-width: 600px) {
     .visualization {
       width: 70%; /* 小屏幕上的宽度调整 */
-      height: 63%
     }
   }
 </style>
