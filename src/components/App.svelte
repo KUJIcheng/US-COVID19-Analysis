@@ -6,6 +6,7 @@
 
   let svg1;
   let svg2;
+  let svg3
 
   let dataByStateAndDate = {};
   let dates = [];
@@ -84,7 +85,7 @@
     const height = svg1.clientHeight; // 获取SVG的高度
 
     // 根据SVG的大小动态计算缩放比例
-    const scale = Math.min(width, height) * 2.2;
+    const scale = Math.min(width, height) * 2.05;
     projection = d3.geoAlbersUsa().scale(scale).translate([width / 2, height / 2]);
     const pathGenerator = d3.geoPath().projection(projection);
     const states = feature(us, us.objects.states).features;
@@ -96,7 +97,7 @@
         .attr('class', 'state')
         .attr('d', pathGenerator)
         .attr('fill', '#F9EBEA')
-        .attr('stroke', '#fff')
+        .attr('stroke', '#AEB6BF')
         .attr('stroke-width', '1');
 
     updateMapColors(); // 根据初始日期更新颜色
@@ -193,7 +194,7 @@
 
   //绘制折线图的代码 <<---------
   function renderLineChart(selectedState) {
-    const margin = { top: 20, right: 80, bottom: 30, left: 80 },
+    const margin = { top: 20, right: 80, bottom: 50, left: 80 },
           width = svg2.clientWidth - margin.left - margin.right,
           height = svg2.clientHeight - margin.top - margin.bottom;
 
@@ -209,7 +210,7 @@
     const filteredData = Object.entries(dataByStateAndDate)
       .filter(([date]) => {
         const day = new Date(date).getDate();
-        return day === 23; // 仅选择每月23号的数据
+        return day === 21; // 仅选择每月23号的数据
       })
       .map(([date, statesData]) => {
         const { cases, mortalityRate } = statesData[selectedState] || { cases: 0, mortalityRate: 0 };
@@ -241,6 +242,20 @@
       .attr("transform", `translate(${width}, 0)`)
       .call(yAxisRight);
 
+    // 添加横向的虚线
+    // 绘制y轴网格线作为背景
+    const yAxisGrid = d3.axisLeft(yScaleLeft)
+      .tickSize(-width) // 使刻度线横跨整个图表宽度
+      .tickFormat("") // 不显示刻度线的文本
+      .ticks(10); // 控制网格线的数量
+
+    // 将网格线添加到SVG中
+    svg.append("g")
+      .attr("class", "grid")
+      .call(yAxisGrid)
+      .attr("stroke-opacity", 0.2) // 设置虚线的透明度
+      .attr("stroke-dasharray", "2,2"); // 设置虚线的样式
+
     // 线条生成器 for cases
     const lineCases = d3.line()
                     .defined(d => !isNaN(d.cases))
@@ -255,23 +270,47 @@
                                 .x(d => xScale(d.date))
                                 .y(d => yScaleRight(d.mortalityRate));
 
-    // 绘制cases线条
-    svg.append("path")
-      .data([filteredData])
-      .attr("class", "line cases-line")
-      .style("stroke", "#CB4335")
-      .style("fill", "none")
-      .style("stroke-width", "3px")
-      .attr("d", lineCases);
+    
+    const pathCases = svg.append("path")
+        .datum(filteredData)
+        .attr("class", "line cases-line")
+        .style("stroke", "#CB4335")
+        .style("fill", "none")
+        .style("stroke-width", "3px")
+        .attr("d", lineCases)
+        .attr("stroke-dasharray", function() {
+            const length = this.getTotalLength(); // 获取线条的总长度
+            return length + " " + length; // 设置dasharray为线条长度
+        })
+        .attr("stroke-dashoffset", function() {
+            return this.getTotalLength(); // 初始偏移量为线条长度
+        });
 
-    // 绘制mortalityRate线条
-    svg.append("path")
-      .data([filteredData])
-      .attr("class", "line mortality-rate-line")
-      .style("stroke", "#5B2C6F")
-      .style("fill", "none")
-      .style("stroke-width", "3px")
-      .attr("d", lineMortalityRate);
+    // 启动动画，使线条从左到右展开
+    pathCases.transition()
+        .duration(2000) // 动画持续时间
+        .attr("stroke-dashoffset", 0); // 最终偏移量为0
+
+    // 绘制mortalityRate线条并添加动画
+    const pathMortalityRate = svg.append("path")
+        .datum(filteredData)
+        .attr("class", "line mortality-rate-line")
+        .style("stroke", "#5B2C6F")
+        .style("fill", "none")
+        .style("stroke-width", "3px")
+        .attr("d", lineMortalityRate)
+        .attr("stroke-dasharray", function() {
+            const length = this.getTotalLength();
+            return length + " " + length;
+        })
+        .attr("stroke-dashoffset", function() {
+            return this.getTotalLength();
+        });
+
+    // 启动动画
+    pathMortalityRate.transition()
+        .duration(2000) // 同样可以调整动画持续时间
+        .attr("stroke-dashoffset", 0);
 
     // 做灰色的线的代码
     // 添加一个透明的矩形覆盖整个SVG来捕捉鼠标事件
@@ -303,10 +342,20 @@
       .style("opacity", 0);
     
     // 鼠标在第二个图移动的时候的交互行为代码在这里 <<---------
+    // 在body中创建一个工具提示的div并设置基本的样式
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip") // 可以通过CSS进一步样式化
+        .style("position", "absolute")
+        .style("background-color", "rgba(255, 255, 255, 0.8)")
+        .style("padding", "5px")
+        .style("border-radius", "5px")
+        .style("opacity", 0) // 初始不可见
+        .style("pointer-events", "none"); // 防止tooltip干扰鼠标事件
+    
     function mousemove(event) {
       const mouseX = d3.pointer(event, this)[0]; // 获取鼠标在SVG内的x坐标
       const date = xScale.invert(mouseX); // 将x坐标转换回日期
-        
+      
       // 找到最接近鼠标位置的日期对应的数据点
       const index = d3.bisector(d => d.date).left(filteredData, date, 1);
       const a = filteredData[index - 1];
@@ -326,64 +375,230 @@
       focusCircleMortalityRate.attr("cx", xScale(d.date))
                               .attr("cy", yScaleRight(d.mortalityRate))
                               .style("opacity", 1);
-      
-      focusLine.style("opacity", 1);
-      focusCircleCases.style("opacity", 1);
-      focusCircleMortalityRate.style("opacity", 1);
 
-      // 根据找到的数据点更新信息框内容和位置
-      const formatDate = d3.timeFormat("%Y-%m");
-      const infoContent = [
-        `Date: ${formatDate(d.date)}`,
-        `Cases: ${d.cases}`,
-        `Mortality Rate: ${(d.mortalityRate * 100).toFixed(2)}%`
-      ]; // 使用数组来组织每一行的内容
-      infoText.text(""); // 清除旧文本内容
-      infoContent.forEach((line, index) => {
-        // 为每行文本添加tspan元素，确保没有多余的空格
-        infoText.append("tspan")
-                .attr("x", 10) // 控制文本靠左对齐，可以根据实际情况调整
-                .attr("y", 20 + index * 20) // 调整行间距
-                .text(line.trim()); // 使用trim()确保每行前后没有多余的空格
-      });
-
-      infoBox.style("display", null) // 显示信息框
-           .attr("transform", `translate(${mouseX - 90}, ${svg1.clientHeight * 0.4})`); // 调整信息框位置
+      // 更新工具提示的内容和位置
+      tooltip.style("opacity", 1)
+            .html(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}<br>Cases: ${d.cases}<br>Mortality Rate: ${(d.mortalityRate * 100).toFixed(2)}%`)
+            .style("left", (event.pageX + 20) + "px")
+            .style("top", (event.pageY - 20) + "px");
     }
-
+    
+    // 为鼠标移出事件更新工具提示的隐藏逻辑
     function mouseout() {
-      focusLine.style("opacity", 0);
-      focusCircleCases.style("opacity", 0);
-      focusCircleMortalityRate.style("opacity", 0);
-      infoBox.style("display", "none"); // 隐藏信息框
+        tooltip.style("opacity", 0);
+        focusLine.style("opacity", 0);
+        focusCircleCases.style("opacity", 0);
+        focusCircleMortalityRate.style("opacity", 0);
     }
 
-    // 在SVG中添加一个分组容器用于显示信息框
-    const infoBox = svg.append("g")
-                      .style("display", "none"); // 初始状态不显示
+    svg.append("rect")
+      .attr("width", width) // 使矩形的宽度与SVG的宽度相同
+      .attr("height", height) // 使矩形的高度与SVG的高度相同
+      .style("fill", "none") // 使矩形透明
+      .style("pointer-events", "all") // 确保矩形可以捕获鼠标事件
+      .on("mouseout", mouseout) // 绑定鼠标移出事件
+      .on("mousemove", mousemove); // 绑定鼠标移动事件
 
-    // 在信息框内添加白色半透明的矩形作为背景
-    infoBox.append("rect")
-          .attr("width", 180) // 根据需要调整大小
-          .attr("height", 70) // 根据需要调整大小
-          .attr("fill", "lightgrey")
-          .attr("fill-opacity", 0.7)
-          .attr("rx", 3) // 圆角大小
-          .attr("ry", 5);
+    // 第一个事件
+    // 将字符串日期转换为日期对象
+    const targetDate = d3.timeParse("%Y-%m-%d")("2020-04-03");
 
-    // 在信息框内添加文本元素显示信息
-    const infoText = infoBox.append("text")
-                            .attr("x", 5) // 文本与矩形边缘的距离
-                            .attr("y", 20) // 初始文本位置
-                            .attr("fill", "black");
-                            svg.append("g")
-    .attr("class", "grid")
-    .call(d3.axisLeft(yScaleLeft)
-        .tickSize(-width)
-        .tickFormat("")
-    )
-    .attr("stroke-opacity", 0.2)
-    .attr("stroke-dasharray", "2,2");
+    // 计算目标日期在x轴上的位置
+    const targetX = xScale(targetDate);
+
+    // 在SVG上绘制一条垂直虚线，位于2020年4月3日的位置
+    svg.append("line")
+        .attr("x1", targetX)
+        .attr("x2", targetX)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "cyan") // 设置线条颜色为蓝绿色
+        .style("stroke-width", "2px") // 设置线条宽度
+        .style("stroke-dasharray", "5,5") // 定义虚线模式，5px线段和5px间隔
+        .style("opacity", 0.7); // 设置线条透明度为半透明
+    
+    // 图标的路径，根据你的项目结构调整
+    const iconPath = 'icons8-protection-mask-64.png';
+    const iconY = height + 17;
+
+    // 添加图标到SVG中
+    svg.append("image")
+        .attr("xlink:href", iconPath)
+        .attr("width", 32)
+        .attr("height", 32)
+        .attr("x", targetX - 16)
+        .attr("y", iconY);
+    
+    // 选择工具提示元素
+    const tooltipDiv = d3.select("#tooltip");
+
+    // 为图标添加鼠标悬停事件
+    svg.select("image")
+        .on("mouseover", function(event) {
+            tooltipDiv
+                .style("display", "block") // 显示工具提示
+                .style("left", (event.pageX - 20) + "px") // 根据鼠标位置定位，添加一些偏移
+                .style("top", (event.pageY + 20) + "px")
+                .html("2020-4-3: The White House Coronavirus Task Force and CDC recommended that persons wear a cloth face covering in public to slow the spread of COVID-19."); // 设置工具提示的内容
+        })
+        .on("mouseout", function() {
+            tooltipDiv.style("display", "none"); // 鼠标移开时隐藏工具提示
+        });
+    
+    // 第二个图标和事件
+    // 将字符串日期转换为日期对象，针对2021年1月20日
+    const targetDate2 = d3.timeParse("%Y-%m-%d")("2021-01-20");
+
+    // 计算目标日期在x轴上的位置
+    const targetX2 = xScale(targetDate2);
+
+    // 在SVG上绘制一条垂直虚线，位于2021年1月20日的位置
+    svg.append("line")
+        .attr("x1", targetX2)
+        .attr("x2", targetX2)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "cyan")
+        .style("stroke-width", "2px")
+        .style("stroke-dasharray", "5,5")
+        .style("opacity", 0.7);
+
+    const iconPath2 = 'icons8-syringe-64.png';
+
+    // 添加新图标到SVG中
+    svg.append("image")
+        .attr("xlink:href", iconPath2)
+        .attr("width", 32)
+        .attr("height", 32)
+        .attr("x", targetX2 - 16)
+        .attr("y", height + 17)
+        .on("mouseover", function(event) {
+            tooltipDiv
+                .style("display", "block")
+                .style("left", (event.pageX - 20) + "px")
+                .style("top", (event.pageY + 20) + "px")
+                .html("2021-1-20: President Joe Biden launched a COVID-19 plan focusing on vaccination, testing, and addressing health disparities. It included a $160 billion proposal for a national vaccination program and expanded testing.");
+        })
+        .on("mouseout", function() {
+            tooltipDiv.style("display", "none");
+        });
+
+    // 第三个图标和事件
+    // 将字符串日期转换为日期对象，针对2021年11月26日
+    const targetDate3 = d3.timeParse("%Y-%m-%d")("2021-11-26");
+
+    // 计算目标日期在x轴上的位置
+    const targetX3 = xScale(targetDate3);
+
+    // 在SVG上绘制一条垂直虚线，位于2021年11月26日的位置
+    svg.append("line")
+        .attr("x1", targetX3)
+        .attr("x2", targetX3)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "cyan")
+        .style("stroke-width", "2px")
+        .style("stroke-dasharray", "5,5")
+        .style("opacity", 0.7);
+
+    // 新图标的路径
+    const iconPath3 = 'icons8-coronavirus-64.png';
+
+    // 添加新图标到SVG中
+    svg.append("image")
+        .attr("xlink:href", iconPath3)
+        .attr("width", 32)
+        .attr("height", 32)
+        .attr("x", targetX3 - 16) // 将图标中心对齐到虚线上
+        .attr("y", height + 17) // 假设将图标放置在x轴下方20像素处
+        .on("mouseover", function(event) {
+            tooltipDiv
+                .style("display", "block")
+                .style("left", (event.pageX - 20) + "px")
+                .style("top", (event.pageY + 30) + "px")
+                .html("2021-11-26: WHO classified the Omicron variant, B.1.1.529, as a Variant of Concern due to its many mutations and potential higher reinfection risk, first identified in South Africa on November 24.​"); // 设置鼠标悬停时显示的文本
+        })
+        .on("mouseout", function() {
+            tooltipDiv.style("display", "none");
+        });
+    
+    // 第四个事件
+    // 将字符串日期转换为日期对象，针对2022年2月25日
+    const targetDate4 = d3.timeParse("%Y-%m-%d")("2022-02-25");
+
+    // 计算目标日期在x轴上的位置
+    const targetX4 = xScale(targetDate4);
+
+    // 在SVG上绘制一条垂直虚线，位于2022年2月25日的位置
+    svg.append("line")
+        .attr("x1", targetX4)
+        .attr("x2", targetX4)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "cyan")
+        .style("stroke-width", "2px")
+        .style("stroke-dasharray", "5,5")
+        .style("opacity", 0.7);
+
+    // 图标的路径
+    const iconPath4 = 'icons8-pcr-test-64.png';
+
+    // 添加图标到SVG中
+    svg.append("image")
+        .attr("xlink:href", iconPath4)
+        .attr("width", 32)
+        .attr("height", 32)
+        .attr("x", targetX4 - 16) // 将图标中心对齐到虚线上
+        .attr("y", height + 17) // 假设将图标放置在x轴下方20像素处
+        .on("mouseover", function(event) {
+            tooltipDiv
+                .style("display", "block")
+                .style("left", (event.pageX - 20) + "px") 
+                .style("top", (event.pageY + 20) + "px")
+                .html("2022-2-25: CDC updated COVID-19 guidance to reflect reduced severity risks due to available treatments and vaccines, emphasizing the continued importance of vaccinations and updated protocols for exposure and infection management.​"); // 设置鼠标悬停时显示的文本
+        })
+        .on("mouseout", function() {
+            tooltipDiv.style("display", "none");
+        });
+
+    // 第五个事件
+    // 将字符串日期转换为日期对象，针对2022年8月11日
+    const targetDate5 = d3.timeParse("%Y-%m-%d")("2022-08-11");
+
+    // 计算目标日期在x轴上的位置
+    const targetX5 = xScale(targetDate5);
+
+    // 在SVG上绘制一条垂直虚线，位于2022年8月11日的位置
+    svg.append("line")
+        .attr("x1", targetX5)
+        .attr("x2", targetX5)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "cyan")
+        .style("stroke-width", "2px")
+        .style("stroke-dasharray", "5,5")
+        .style("opacity", 0.7);
+
+    // 图标的路径
+    const iconPath5 = 'icons8-health-shield-64.png';
+
+    // 添加图标到SVG中
+    svg.append("image")
+        .attr("xlink:href", iconPath5)
+        .attr("width", 32)
+        .attr("height", 32)
+        .attr("x", targetX5 - 16) // 将图标中心对齐到虚线上
+        .attr("y", height + 17) // 假设将图标放置在x轴下方20像素处
+        .on("mouseover", function(event) {
+            tooltipDiv
+                .style("display", "block")
+                .style("left", (event.pageX - 20) + "px") // 根据鼠标位置定位，添加一些偏移
+                .style("top", (event.pageY + 20) + "px") // 根据鼠标位置定位，添加一些偏移
+                .html("2022-8-11: CDC simplified COVID-19 guidance, emphasizing vaccines and updating protocols for exposure, without requiring quarantine but recommending masking and testing."); // 设置鼠标悬停时显示的文本
+        })
+        .on("mouseout", function() {
+            tooltipDiv.style("display", "none"); // 鼠标移开时隐藏工具提示
+        });
   }
 
   
@@ -404,6 +619,8 @@
 
 
 <!---------- HTML的构成部分 ---------->
+<div class="backdrop"></div>
+
 <div class="container">
 
 
@@ -429,16 +646,16 @@
     <h2>Then lead to the next visualization, using a line chart to observe the changing trend of covid.</h2>
   </div>
 
-  <div class="visualization">
-    <svg bind:this={svg2} width="100%" height="98%"></svg>
-  </div>
-
   <div class="controls">
     <select bind:value={selectedState} class="state-selector">
       {#each states as state}
         <option value="{state}">{state}</option>
       {/each}
     </select>
+  </div>
+
+  <div class="visualization">
+    <svg bind:this={svg2} width="100%" height="98%"></svg>
   </div>
   
   <div class="text-box">
@@ -447,8 +664,7 @@
   </div>
 
   <div class="visualization">
-    <h2>Here will be a line chart here to show how the change rate of mortality changes over time to show the changing trend of the harm of COVID19.</h2>
-    <!-- 可视化组件3将放置在这里 -->
+    <svg bind:this={svg3} width="100%" height="98%"></svg>
   </div>
 
   <div class="text-box">
@@ -456,10 +672,15 @@
   </div>
 </div>
 
+<div id="tooltip" style="display: none; position: absolute; padding: 8px; background: white; border: none; border-radius: 3px; pointer-events: none;">Tooltip</div>
+
 <style>
 
   :global(body) {
     background-color: #EAF2F8; /* 背景颜色 */
+    background-image: url('/covid8.jpg'); /* 设置背景图片，根据你的实际路径调整 */
+    background-size: cover; /* 保证背景图片铺满整个容器 */
+    background-attachment: fixed; /* 背景图片不随滚动条滚动 */
   }
 
   .container {
@@ -475,12 +696,13 @@
     width: 70vw; /* 页面宽度的70% */
     height: 66vh; /* 视口高度的50% */
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 1rem;
     margin-bottom: 2rem; /* 为滚动提供空间 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     overflow: auto; /* 如果内容超出，则允许滚动 */
-    background-color: white;
+    
+    background-color: rgba(234, 237, 237, 0.9); /* 设置半透明的底色 */
   }
 
   .text-box {
@@ -494,7 +716,7 @@
   align-items: center; /* 横向居中对齐 */
   padding: 1rem;
   width: 60%; /* 调整为所需的百分比 */
-  margin: 0 auto; /* 水平居中 */
+  gap: 20px; /* 控制内部元素之间的间距 */
   margin-top: -4%; /* 向上移动 */
   }
 
@@ -503,15 +725,65 @@
   }
 
   .controls button {
-  margin-right: 3%; /* bottom和日期的间距 */
+    margin-right: 20px; /* 按钮和日期的间距 */
+    border-radius: 10px; /* 圆角 */
+    height: 40px;
+    width: 90px;
+    background-color: #EAEDED; /* 默认的浅色背景 */
+    transition: background-color 0.3s; /* 平滑的背景色过渡效果 */
+    border: 1px solid lightgrey; /* 设置边框颜色为lightgrey */
+  }
+
+  .controls button:hover {
+    background-color: #D5D8DC; /* 鼠标悬停时的深色背景 */
+  }
+
+  .controls p {
+    margin-right: 0;
+    padding: 0.5rem 1rem; /* 增加一些内边距以提升可读性 */
+    background-color: #EAEDED; /* 背景色 */
+    border: 1px solid lightgrey; /* 边框颜色 */
+    border-radius: 10px; /* 圆角 */
+  }
+
+  .controls p::before {
+    content: "Date: ";
   }
 
   .state-selector {
     width: 100%; /* 放大选择框 */
     max-width: 400px; /* 最大宽度 */
     height: 40px; /* 增加高度 */
+    border-radius: 5px;
     font-size: 16px; /* 字体大小 */
     margin: 20px auto; /* 居中显示 */
+    margin-bottom: 0px;
+    margin-top: 70px;
+  }
+
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(6px);
+    z-index: -1;
+  }
+
+
+  #tooltip {
+    display: none; /* 初始不显示 */
+    position: absolute; /* 使用绝对定位 */
+    padding: 8px;
+    background: white;
+    border: 1px solid black;
+    border-radius: 4px;
+    pointer-events: none; /* 防止阻挡鼠标事件 */
+    z-index: 100; /* 确保在上层 */
+    max-width: 300px; /* 设置最大宽度 */
+    white-space: normal; /* 允许文本换行 */
+    overflow-wrap: break-word; /* 在需要的时候断词 */
   }
 
   /* 媒体查询，用于小屏幕的样式调整 */
