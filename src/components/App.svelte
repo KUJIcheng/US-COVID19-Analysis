@@ -75,6 +75,7 @@
 
     renderMap(us);
     renderLineChart(selectedState);
+    renderLineChartWithMortalityRateChange()
   });
 
 //----------function 区域 ----------//
@@ -601,7 +602,98 @@
         });
   }
 
-  
+  function renderLineChartWithMortalityRateChange() {
+    const margin = { top: 20, right: 80, bottom: 20, left: 80 },
+          width = svg3.clientWidth - margin.left - margin.right,
+          height = svg3.clientHeight - margin.top - margin.bottom;
+    
+    const filteredData = Object.entries(dataByStateAndDate)
+      .filter(([date]) => {
+        const day = new Date(date).getDate();
+        return day === 21; // 仅选择每月21号的数据
+      })
+      .map(([date, statesData]) => {
+        // 计算所有州的mortalityRateChange的平均值
+        const allStates = Object.values(statesData); // 获取所有州的数据
+        const averageMortalityRateChange = allStates.reduce((sum, curr) => sum + (curr.mortalityRateChange || 0), 0) / allStates.length;
+
+        return {
+          date: d3.timeParse("%Y-%m-%d")(date),
+          mortalityRateChange: averageMortalityRateChange // 使用计算出的平均死亡率变化率
+        };
+      });
+
+    // 清空之前的绘图
+    d3.select(svg3).selectAll('*').remove();
+
+    const svg = d3.select(svg3)
+                  .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                  .append("g")
+                  .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // 假设filteredData是已经根据需要处理的数据
+    const xScale = d3.scaleTime()
+                    .range([0, width])
+                    .domain(d3.extent(filteredData, d => d.date));
+
+    const yScale = d3.scaleLinear()
+                    .range([height, 0])
+                    .domain([-0.028, 0.028]);
+
+    // 定义x轴和y轴
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale)
+                    .tickFormat(d3.format(".0%")); // 将刻度格式化为百分比
+
+    // 绘制x轴
+    svg.append("g")
+      .attr("transform", `translate(0, ${height / 2})`) // x轴放在中间
+      .call(xAxis);
+
+    // 绘制y轴
+    svg.append("g")
+      .call(yAxis);
+    
+    // 添加横向虚线
+    svg.append("g")
+       .attr("class", "grid")
+       .call(d3.axisLeft(yScale)
+             .tickSize(-width) // 横跨整个图表的宽度
+             .tickFormat("") // 不显示刻度文本
+       )
+       .attr("stroke-dasharray", "2,2") // 设置为虚线
+       .attr("stroke-opacity", 0.7) // 可以调整虚线的透明度
+       .selectAll(".tick line") // 选择所有的刻度线
+       .attr("stroke", "lightgrey"); // 设置虚线的颜色
+
+    // 定义线条生成器
+    const lineGenerator = d3.line()
+        .defined(d => !isNaN(d.mortalityRateChange)) // 确保数据有效
+        .curve(d3.curveMonotoneX) // 使用MonotoneX曲线让线条平滑
+        .x(d => xScale(d.date))
+        .y(d => yScale(d.mortalityRateChange));
+
+    // 绘制线条，并设置初始的 stroke-dasharray 和 stroke-dashoffset
+    const path = svg.append("path")
+        .datum(filteredData) // 绑定处理后的数据
+        .attr("fill", "none")
+        .attr("stroke", "#E74C3C") // 使用指定的颜色
+        .attr("stroke-width", 3)
+        .attr("d", lineGenerator)
+        .attr("stroke-dasharray", function() {
+            const length = this.getTotalLength(); // 获取线条的总长度
+            return `${length} ${length}`; // 设置dasharray为线条长度
+        })
+        .attr("stroke-dashoffset", function() {
+            return this.getTotalLength(); // 初始偏移量为线条长度
+        });
+
+    // 应用动画，逐渐将 stroke-dashoffset 减少到 0
+    path.transition()
+        .duration(3000) // 动画持续时间，可以根据需要调整
+        .attr("stroke-dashoffset", 0);
+  }
+
 
   // 进度条的更新设置 <<---------
   $: selectedDateString = dates[selectedDateIndex]; // 先更新selectedDateString
