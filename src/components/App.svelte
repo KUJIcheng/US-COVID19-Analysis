@@ -3,6 +3,7 @@
   import * as d3 from 'd3';
   import { csv } from 'd3-fetch';
   import { feature } from 'topojson-client';
+  import { browser } from '$app/environment';
 
   let svg1;
   let svg2;
@@ -34,12 +35,12 @@
   'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 
   'Virgin Islands', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
 
+
   //----------加载数据区域 ----------//
 
   onMount(async () => {
     us = await d3.json('states-10m.json');
     const data = await csv('daily_data_complete.csv');
-    // const monthData = await csv('monthly_data.csv');
 
     // 读取每日的数据以及处理部分 <<---------
     data.forEach(d => {
@@ -76,6 +77,53 @@
     renderMap(us);
     renderLineChart(selectedState);
     renderLineChartWithMortalityRateChange()
+
+    if (browser) {
+      // 处理.text-box的从左向右淡入
+      const textObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target;
+          target.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+          if (entry.isIntersecting) {
+            target.style.opacity = 1;
+            target.style.transform = 'translateX(0)';
+          } else {
+            target.style.opacity = 0;
+            target.style.transform = 'translateX(-100%)';
+          }
+        });
+      }, {threshold: 0.1});
+
+      document.querySelectorAll('.text-box').forEach((element) => {
+        textObserver.observe(element);
+      });
+
+      // 处理.title-box的从中心淡入
+      const titleObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target;
+          // 由于我们只关注淡入，所以不需要transform
+          target.style.transition = 'opacity 3s ease-out';
+          if (entry.isIntersecting) {
+            target.style.opacity = 1;
+          } else {
+            target.style.opacity = 0;
+          }
+        });
+      }, {threshold: 0.2});
+
+      document.querySelectorAll('.title-box').forEach((element) => {
+        // 设置初始状态为不可见，这对于淡入效果是必要的
+        element.style.opacity = 0;
+        titleObserver.observe(element);
+      });
+
+      // 清理函数：断开两个observer
+      return () => {
+        textObserver.disconnect();
+        titleObserver.disconnect();
+      };
+    }
   });
 
 //----------function 区域 ----------//
@@ -418,7 +466,6 @@
         .style("stroke-dasharray", "5,5") // 定义虚线模式，5px线段和5px间隔
         .style("opacity", 0.7); // 设置线条透明度为半透明
     
-    // 图标的路径，根据你的项目结构调整
     const iconPath = 'icon/icons8-protection-mask-64.png';
     const iconY = height + 17;
 
@@ -438,7 +485,7 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block") // 显示工具提示
-                .style("left", (event.pageX - 20) + "px") // 根据鼠标位置定位，添加一些偏移
+                .style("left", (event.pageX - 20) + "px")
                 .style("top", (event.pageY + 20) + "px")
                 .html("2020-4-3: The White House Coronavirus Task Force and CDC recommended that persons wear a cloth face covering in public to slow the spread of COVID-19."); // 设置工具提示的内容
         })
@@ -593,8 +640,8 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block")
-                .style("left", (event.pageX - 20) + "px") // 根据鼠标位置定位，添加一些偏移
-                .style("top", (event.pageY + 20) + "px") // 根据鼠标位置定位，添加一些偏移
+                .style("left", (event.pageX - 20) + "px")
+                .style("top", (event.pageY + 20) + "px")
                 .html("2022-8-11: CDC simplified COVID-19 guidance, emphasizing vaccines and updating protocols for exposure, without requiring quarantine but recommending masking and testing."); // 设置鼠标悬停时显示的文本
         })
         .on("mouseout", function() {
@@ -631,7 +678,6 @@
                   .append("g")
                   .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // 假设filteredData是已经根据需要处理的数据
     const xScale = d3.scaleTime()
                     .range([0, width])
                     .domain(d3.extent(filteredData, d => d.date));
@@ -690,7 +736,7 @@
 
     // 应用动画，逐渐将 stroke-dashoffset 减少到 0
     path.transition()
-        .duration(3000) // 动画持续时间，可以根据需要调整
+        .duration(3000) // 动画持续时间
         .attr("stroke-dashoffset", 0);
   }
 
@@ -715,10 +761,14 @@
 
 <div class="container">
 
+  <div class="title-box">
+    <h1>Is the Threat of <br>COVID-19<br> DIMINISHING <br>in the United States?<br></h1>
+    <h2>Exploration of COVID-19's Evolution in the United States and the Impact of "Big Events" and Government Policies</h2>
+  </div>
 
-  <div class="text-box">
-    <h1>Mapping COVID-19: Tracing the Spread and Impact of COVID-19 Across the USA</h1>
-    <h2> Analyzing the Interplay: Government Policy Responses and the COVID-19 Pandemic's Trajectory</h2>
+  <div class="text-box" style="text-align: left;">
+    <h2>What is "Big Events?"</h2>
+    <h3>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
@@ -802,7 +852,7 @@
 
   :global(body) {
     background-color: #EAF2F8; /* 背景颜色 */
-    background-image: url('/covid8.jpg'); /* 设置背景图片，根据你的实际路径调整 */
+    background-image: url('/covid8.jpg'); /* 设置背景图片 */
     background-size: cover; /* 保证背景图片铺满整个容器 */
     background-attachment: fixed; /* 背景图片不随滚动条滚动 */
   }
@@ -829,10 +879,53 @@
     background-color: rgba(234, 237, 237, 0.9); /* 设置半透明的底色 */
   }
 
+  .title-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 设置高度占满整个视口高度 */
+    width: 98vw; /* 设置宽度占满整个视口宽度 */
+    margin: 0; /* 移除外边距 */
+    padding: 0; /* 调整内边距，如果需要的话 */
+    font-family: 'Oswald', sans-serif;
+    opacity: 0;
+    transition: opacity 1s ease-out; /* 如果你想要更长时间的淡入效果 */
+  }
+
+  .title-box h1 {
+      font-size: 3.7rem; /* 根据需要调整标题的大小 */
+      font-weight: 700; /* Oswald的粗体权重 */
+      text-align: center
+  }
+
+  .title-box h2 {
+      font-size: 1.5rem; /* 根据需要调整副标题的大小 */
+      font-weight: 500; /* Oswald的常规权重 */
+  }
+
+
   .text-box {
     width: 70%; /* 与可视化组件宽度一致 */
     text-align: center; /* 文本居中 */
     font-family: 'Oswald', sans-serif;
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  .text-box h1 {
+      font-size: 1.5rem; /* 根据需要调整副标题的大小 */
+      font-weight: 500; /* Oswald的常规权重 */
+  }
+
+  .text-box h2 {
+      font-size: 1.5rem; /* 根据需要调整副标题的大小 */
+      font-weight: 500; /* Oswald的常规权重 */
+  }
+
+  .text-box h3 {
+      font-size: 1.3rem; /* 根据需要调整副标题的大小 */
+      font-weight: 420; /* Oswald的常规权重 */
   }
 
   .controls {
@@ -911,7 +1004,7 @@
     white-space: normal; /* 允许文本换行 */
     overflow-wrap: break-word; /* 在需要的时候断词 */
   }
-
+  
   /* 媒体查询，用于小屏幕的样式调整 */
   @media (max-width: 600px) {
     .visualization {
