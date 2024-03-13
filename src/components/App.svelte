@@ -151,7 +151,8 @@
 
     updateMapColors(); // 根据初始日期更新颜色
     updateCircles(); // 绘制圆圈
-    addColorLegend()
+    addColorLegend();
+    addMortalityRateLegend();
   }
 
   function updateMapColors() {
@@ -195,7 +196,7 @@
 
       // 使用比例确定圆的半径和颜色
       const radius = deaths ? d3.scaleSqrt().domain([0, maxDeaths]).range([0, svg1.clientHeight * 0.06])(deaths) : 0; // 如果没有死亡数，使用默认大小0
-      const color = mortalityRate ? d3.scaleLinear().domain([0, 0.06]).range(["lightgrey", "black"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
+      const color = mortalityRate ? d3.scaleLinear().domain([0, 0.08]).range(["#46BF98", "#BF46BD"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
 
       d3.select(svg1).append("circle")
         .attr("cx", center[0])
@@ -211,7 +212,7 @@
     // 使用SVG的尺寸计算颜色比例尺的尺寸和位置参数
     const legendHeight = svg1.clientHeight * 0.25; // 比例尺高度为SVG高度的25%
     const legendWidth = svg1.clientWidth * 0.02; // 比例尺宽度为SVG宽度的2%
-    const legendMargin = { top: svg1.clientHeight * 0.01, left: svg1.clientWidth * 0.01 }; // 边距基于SVG尺寸
+    const legendMargin = { top: svg1.clientHeight * 0.01, left: svg1.clientWidth * 0.002 }; // 边距基于SVG尺寸
 
     // 创建颜色比例尺的线性比例尺
     const colorScale = d3.scaleLinear()
@@ -263,7 +264,73 @@
     // 设置刻度标签的样式，使其半透明
     axisGroup.selectAll('.tick text')
       .style('opacity', 0.5); // 设置半透明效果
+
+    legend.append("text")
+      .attr("class", "legend-title")
+      .attr("x", 0)
+      .attr("y", -10) // 调整这个值以在比例尺上方留出适当的空间
+      .text("Infection Numbers (M)")
+      .style("font-size", "10px") // 调整字体大小
+      .attr("fill", "rgba(0,0,0,0.5)"); // 半透明的黑色文本
   }
+
+  function addMortalityRateLegend() {
+    const legendHeight = svg1.clientHeight * 0.25; // 比例尺高度为SVG高度的25%
+    const legendWidth = svg1.clientWidth * 0.02; // 比例尺宽度为SVG宽度的2%
+    const legendMargin = { top: svg1.clientHeight * 0.4, right: svg1.clientWidth * 0.002 }; // 调整到左上角
+
+    const colorScale = d3.scaleLinear()
+      .domain([0, 0.08]) // 对应于圆圈颜色的死亡率范围
+      .range(["#46BF98", "#BF46BD"])
+      .nice();
+
+    const legendScale = d3.scaleLinear()
+      .domain([0, 0.08]) // 死亡率范围
+      .range([legendHeight, 0]);
+
+    const legend = d3.select(svg1).append('g')
+      .attr('class', 'mortality-rate-legend')
+      .attr('transform', `translate(${legendMargin.right}, ${legendMargin.top})`);
+
+    legend.append('defs').append('linearGradient')
+      .attr('id', 'gradient-mortality-rate')
+      .attr('x1', '0%')
+      .attr('y1', '100%')
+      .attr('x2', '0%')
+      .attr('y2', '0%')
+      .selectAll('stop')
+      .data(colorScale.ticks().map((t, i, n) => ({ offset: `${100 * i / n.length}%`, color: colorScale(t) })))
+      .enter().append('stop')
+      .attr('offset', d => d.offset)
+      .attr('stop-color', d => d.color);
+
+    legend.append('rect')
+      .attr('width', legendWidth)
+      .attr('height', legendHeight)
+      .style('fill', 'url(#gradient-mortality-rate)');
+
+    const legendAxis = d3.axisRight(legendScale)
+      .ticks(5)
+      .tickFormat(d => `${d * 100}%`); // 将刻度转换为百分比格式
+
+    legend.append('g')
+      .attr('class', 'mortality-rate-axis')
+      .attr('transform', `translate(${legendWidth}, 0)`)
+      .call(legendAxis)
+      .selectAll('.tick text')
+      .style('opacity', 0.5); // 设置半透明效果
+
+    legend.append("text")
+      .attr("class", "legend-title")
+      .attr("x", 0)
+      .attr("y", -10) // 同样调整这个值以适当地放置文本
+      .text("Mortality Rate (%)")
+      .style("font-size", "10px") // 调整字体大小
+      .attr("fill", "rgba(0,0,0,0.5)"); // 半透明的黑色文本
+  }
+
+  
+
 
 
   // 第一个图的播放功能代码 <<---------
@@ -273,17 +340,21 @@
   // 播放或暂停功能
   function togglePlay() {
     if (!playing) {
-      // 如果当前不在播放就开始播放
+      // 检查是否需要从头开始播放
+      if (selectedDateIndex >= dates.length - 1) {
+        // 如果当前是最后一个日期，先重置到初始状态
+        resetPlay();
+      }
+      // 开始或继续播放
       playing = true;
       intervalId = setInterval(() => {
         if (selectedDateIndex < dates.length - 1) {
-          selectedDateIndex += 1; // 前进到下一个日期
+          selectedDateIndex += 1;
         } else {
-          resetPlay(); // 如果到达末尾则重置
+          stopPlaying(); // 到达末尾时停止播放
         }
-      }, 15); // 更新频次
+      }, 10);
     } else {
-      // 如果当前在播放则暂停
       stopPlaying();
     }
   }
