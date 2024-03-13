@@ -419,7 +419,7 @@
         .style("opacity", 0.7); // 设置线条透明度为半透明
     
     // 图标的路径，根据你的项目结构调整
-    const iconPath = 'icons8-protection-mask-64.png';
+    const iconPath = 'icon/icons8-protection-mask-64.png';
     const iconY = height + 17;
 
     // 添加图标到SVG中
@@ -464,7 +464,7 @@
         .style("stroke-dasharray", "5,5")
         .style("opacity", 0.7);
 
-    const iconPath2 = 'icons8-syringe-64.png';
+    const iconPath2 = 'icon/icons8-syringe-64.png';
 
     // 添加新图标到SVG中
     svg.append("image")
@@ -503,7 +503,7 @@
         .style("opacity", 0.7);
 
     // 新图标的路径
-    const iconPath3 = 'icons8-coronavirus-64.png';
+    const iconPath3 = 'icon/icons8-coronavirus-64.png';
 
     // 添加新图标到SVG中
     svg.append("image")
@@ -542,7 +542,7 @@
         .style("opacity", 0.7);
 
     // 图标的路径
-    const iconPath4 = 'icons8-pcr-test-64.png';
+    const iconPath4 = 'icon/icons8-pcr-test-64.png';
 
     // 添加图标到SVG中
     svg.append("image")
@@ -581,7 +581,7 @@
         .style("opacity", 0.7);
 
     // 图标的路径
-    const iconPath5 = 'icons8-health-shield-64.png';
+    const iconPath5 = 'icon/icons8-health-shield-64.png';
 
     // 添加图标到SVG中
     svg.append("image")
@@ -717,10 +717,13 @@
 
 
   <div class="text-box">
-    <h1>Title should be here, but still undecided</h1>
-    <h2>Sub-title or additional information</h2>
+    <h1>Mapping COVID-19: Tracing the Spread and Impact of COVID-19 Across the USA</h1>
+    <h2> Analyzing the Interplay: Government Policy Responses and the COVID-19 Pandemic's Trajectory</h2>
   </div>
 
+  <div class="text-box" style="text-align: left;">
+    <h3>We wish to explore and visualize the spread and impact of the COVID-19 pandemic across different states. The first visualization depicts a map of the United States, shaded in varying intensities of color to represent the number of COVID-19 cases, with darker shades indicating higher case numbers. The superimposed circles of differing sizes on each state suggest a proportional representation of death cases, with larger circles indicating greater numbers. The shades of color of the circles suggest the mortality rates. This visualization allows users to visualize at a glance the spread and impact of the COVID-19 pandemic across different states with data from January 21, 2020, to March 23, 2023.</h3>
+  </div>
 
   <div class="visualization">
     <svg bind:this={svg1} width="100%" height="98%"></svg>
@@ -733,9 +736,9 @@
     <input type="range" bind:value={selectedDateIndex} min="0" max={dates.length - 1}>
   </div>
 
-  <div class="text-box">
-    <h2>Explain some trends and details in the map to users.</h2>
-    <h2>Then lead to the next visualization, using a line chart to observe the changing trend of covid.</h2>
+  <div class="text-box" style="text-align: left;">
+    <h2>COVID Tendency in US in General:</h2>
+    <h3>Beginning in March 2020, the East Coast, notably New York, New Jersey, and Pennsylvania, experienced a surge in COVID-19 deaths. Through 2021, death counts rose across several states, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases. Thus, we would like to explore the details of the spread trajectory of COVID-19 in particular states, taking into account government policies and public health measures.</h3>
   </div>
 
   <div class="controls">
@@ -750,21 +753,50 @@
     <svg bind:this={svg2} width="100%" height="98%"></svg>
   </div>
   
-  <div class="text-box">
-    <h2>Here we describe some of the content of the above line chart, and then lead to our next visualization below, which is a line chart about the rate of change of mortality.</h2>
-    <h2>the text box background can be edit to have a better look</h2>
+  <div class="text-box" style="text-align: left;">
+    <h2>COVID Tendency in Each State:</h2>
+    <h3>This line chart primarily showcases the progression of COVID-19 cases and mortality rates over the years within a chosen state. The left y-axis delineates the cases recorded each month, while the right y-axis corresponds to the mortality rate for the same period. By scrutinizing specific states' line charts, notable disparities emerge at certain time intervals between cases and mortality rates. Consequently, we integrated small icons, such as masks and vaccination symbols, to highlight significant developments throughout the years. Examining the overall trends, a pivotal shift becomes apparent towards the end of 2020. This pivotal moment can be attributed to the widespread distribution of vaccinations and the evolving nature of the COVID-19 virus, which appears to exhibit reduced virulence alongside its escalating spread.</h3>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>The Effect of the "Big Events":</h2>
+    <h3>The description of the big events, how it effect to the covid tendency.</h3>
   </div>
 
   <div class="visualization">
     <svg bind:this={svg3} width="100%" height="98%"></svg>
   </div>
 
-  <div class="text-box">
-    <h1>Draw the conclusion here.</h1>
+  <div class="text-box" style="text-align: left;">
+    <h2>How Death Rate Change Over Time:</h2>
+    <h3>The graph illustrates the rate of change in mortality over a timeline from 2021 to 2023. There was a significant spike in April 2020, indicating a sharp increase in mortality rate corresponding to the surge in COVID-19 deaths at that time. This is followed by fluctuations above and below the baseline, but the overall trend shows a decrease in mortality rate as the fluctuations become less pronounced over time. The arrival of the Omicron variant in November 2021 correlated with an uptick in infection rates, yet mortality rates remained comparatively steady. This stability in mortality could suggest a lower severity of the Omicron variant compared to its predecessors.
+      By October 2022, the rate appears to have stabilized near the baseline, suggesting that the mortality rate changes have significantly reduced or normalized compared to the initial spike.
+      </h3>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>What does a reduced oscillation in the rate of change of mortality tell:</h2>
+    <h3>Analysis of the changing rate of the death rate</h3>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>What does a reduced oscillation in the rate of change of mortality tell:</h2>
+    <h3>Analysis of the changing rate of the death rate</h3>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h1>Conclusion:</h1>
+    <h3>Our exploration of COVID-19's impact across the USA highlights key trends, including an initial death surge on the East Coast in early 2020, followed by a reduction in mortality rates despite case surges in states like California, Texas, and Florida through 2021. This pattern suggests improvements in treatments and interventions. A notable shift towards reduced virus impact was observed by the end of 2020, aligning with vaccination efforts, indicating a weakening in the virus's effect due to reduced virulence and increased spread.</h3>
+    <h3>Analysis from 2021 to 2023 shows mortality rate fluctuations with a general downward trend, stabilizing by October 2022, despite the Omicron variant's emergence in November 2021 leading to higher infection rates but steady mortality rates, hinting at its lower severity. The dynamic between government policies, public health measures, and COVID-19's trajectory underscores the importance of detailed spread analysis and policy response understanding to navigate future challenges and mitigate ongoing pandemic impacts.</h3>
   </div>
 </div>
 
 <div id="tooltip" style="display: none; position: absolute; padding: 8px; background: white; border: none; border-radius: 3px; pointer-events: none;">Tooltip</div>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -800,6 +832,7 @@
   .text-box {
     width: 70%; /* 与可视化组件宽度一致 */
     text-align: center; /* 文本居中 */
+    font-family: 'Oswald', sans-serif;
   }
 
   .controls {
@@ -808,7 +841,7 @@
   align-items: center; /* 横向居中对齐 */
   padding: 1rem;
   width: 60%; /* 调整为所需的百分比 */
-  gap: 20px; /* 控制内部元素之间的间距 */
+  gap: 40px; /* 控制内部元素之间的间距 */
   margin-top: -4%; /* 向上移动 */
   }
 
@@ -836,6 +869,7 @@
     background-color: #EAEDED; /* 背景色 */
     border: 1px solid lightgrey; /* 边框颜色 */
     border-radius: 10px; /* 圆角 */
+    
   }
 
   .controls p::before {
