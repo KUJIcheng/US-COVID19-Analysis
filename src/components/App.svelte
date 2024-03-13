@@ -92,7 +92,7 @@
             target.style.transform = 'translateX(-100%)';
           }
         });
-      }, {threshold: 0.1});
+      }, {threshold: 0.15});
 
       document.querySelectorAll('.text-box').forEach((element) => {
         textObserver.observe(element);
@@ -151,6 +151,7 @@
 
     updateMapColors(); // 根据初始日期更新颜色
     updateCircles(); // 绘制圆圈
+    addColorLegend()
   }
 
   function updateMapColors() {
@@ -205,6 +206,65 @@
         .attr("stroke", "none"); // 无边框
     });
   }
+
+  function addColorLegend() {
+    // 使用SVG的尺寸计算颜色比例尺的尺寸和位置参数
+    const legendHeight = svg1.clientHeight * 0.25; // 比例尺高度为SVG高度的25%
+    const legendWidth = svg1.clientWidth * 0.02; // 比例尺宽度为SVG宽度的2%
+    const legendMargin = { top: svg1.clientHeight * 0.01, left: svg1.clientWidth * 0.01 }; // 边距基于SVG尺寸
+
+    // 创建颜色比例尺的线性比例尺
+    const colorScale = d3.scaleLinear()
+      .domain([0, maxCases])
+      .range(['#F9EBEA', '#641E16'])
+      .nice();
+
+    // 创建表示比例尺刻度的线性比例尺
+    const legendScale = d3.scaleLinear()
+      .domain([0, maxCases])
+      .range([legendHeight, 0]);
+
+    // 添加颜色比例尺的容器
+    const legend = d3.select(svg1).append('g')
+      .attr('class', 'color-legend')
+      .attr('transform', `translate(${legendMargin.left}, ${svg1.clientHeight - legendHeight - legendMargin.top})`);
+
+    // 添加颜色渐变
+    legend.append('defs').append('linearGradient')
+      .attr('id', 'gradient-color')
+      .attr('x1', '0%')
+      .attr('y1', '100%')
+      .attr('x2', '0%')
+      .attr('y2', '0%')
+      .selectAll('stop')
+      .data(colorScale.ticks().map((t, i, n) => ({ offset: `${100 * i / n.length}%`, color: colorScale(t) })))
+      .enter().append('stop')
+      .attr('offset', d => d.offset)
+      .attr('stop-color', d => d.color);
+
+    // 添加颜色渐变矩形
+    legend.append('rect')
+      .attr('width', legendWidth)
+      .attr('height', legendHeight)
+      .style('fill', 'url(#gradient-color)');
+
+    // 添加比例尺刻度，使用.tickFormat来格式化刻度文本
+    const legendAxis = d3.axisRight(legendScale)
+      .ticks(5)
+      .tickSize(legendWidth * 0.5) // 调整刻度大小
+      .tickFormat(d => `${d / 1e6}M`); // 将感染人数转换为以百万（M）为单位的格式
+
+    // 将比例尺刻度添加到图例
+    const axisGroup = legend.append('g')
+      .attr('class', 'color-axis')
+      .attr('transform', `translate(${legendWidth}, 0)`)
+      .call(legendAxis);
+
+    // 设置刻度标签的样式，使其半透明
+    axisGroup.selectAll('.tick text')
+      .style('opacity', 0.5); // 设置半透明效果
+  }
+
 
   // 第一个图的播放功能代码 <<---------
   let playing = false; // 用于追踪播放状态
@@ -763,16 +823,28 @@
 
   <div class="title-box">
     <h1>Is the Threat of <br>COVID-19<br> DIMINISHING <br>in the United States?<br></h1>
-    <h2>Exploration of COVID-19's Evolution in the United States and the Impact of "Big Events" and Government Policies</h2>
+    <h2>Exploration of COVID-19's Evolution in the United States and the Impact of "Big Events"</h2>
   </div>
 
   <div class="text-box" style="text-align: left;">
     <h2>What is "Big Events?"</h2>
-    <h3>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</h3>
+    <h3>"Big Events" include the U.S. government's macro policies on COVID-19, health recommendations from the World Health Organization (WHO), and the emergence of highly differentiated COVID variants. Here are two example of the "Big Events":</h3>
+  </div>
+
+  <div class="image-container">
+    <div class="image-item">
+      <img src="pictures/event1.jpg" alt="Event 1">
+      <p>CDC release anti-epidemic guidance</p>
+    </div>
+    <div class="image-item">
+      <img src="pictures/event2.jpg" alt="Event 2">
+      <p>Omicron was discovered in US</p>
+    </div>
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h3>We wish to explore and visualize the spread and impact of the COVID-19 pandemic across different states. The first visualization depicts a map of the United States, shaded in varying intensities of color to represent the number of COVID-19 cases, with darker shades indicating higher case numbers. The superimposed circles of differing sizes on each state suggest a proportional representation of death cases, with larger circles indicating greater numbers. The shades of color of the circles suggest the mortality rates. This visualization allows users to visualize at a glance the spread and impact of the COVID-19 pandemic across different states with data from January 21, 2020, to March 23, 2023.</h3>
+    <h2>COVID-19 on Macro-Level over Time:</h2>
+    <h3>Before we embark on our journey of exploration, let's first pause to examine the broader transformations COVID-19 is undergoing on a macroscopic scale. This will provide us with a preliminary overview of the evolving situation across individual states over time.</h3>
   </div>
 
   <div class="visualization">
@@ -787,7 +859,7 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>COVID Tendency in US in General:</h2>
+    <h2>What is the Map Above Tell?</h2>
     <h3>Beginning in March 2020, the East Coast, notably New York, New Jersey, and Pennsylvania, experienced a surge in COVID-19 deaths. Through 2021, death counts rose across several states, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases. Thus, we would like to explore the details of the spread trajectory of COVID-19 in particular states, taking into account government policies and public health measures.</h3>
   </div>
 
@@ -978,7 +1050,36 @@
     margin: 20px auto; /* 居中显示 */
     margin-bottom: 0px;
     margin-top: 70px;
+    background-color: #EAEDED; /* 默认的浅色背景 */
+    transition: background-color 0.3s; /* 平滑的背景色过渡效果 */
+    border: 1px solid lightgrey; /* 设置边框颜色为lightgrey */
   }
+
+  .image-container {
+    display: flex; /* 横向排列图片 */
+    justify-content: space-around; /* 图片之间的间隔 */
+    flex-wrap: wrap; /* 允许内容换行 */
+    width: 70vw; 
+    margin-bottom: 2rem; /* 为滚动提供空间 */
+  }
+
+  .image-item {
+    text-align: center; /* 使图片和文字在其容器内居中 */
+    width: auto;
+  }
+
+  .image-item img {
+    width: auto; /* 根据需要调整宽度 */
+    height: 35vh; /* 保持图片高度一致 */
+    object-fit: cover; /* 裁剪图片以填充容器 */
+    border-radius: 10px; /* 如需要，为图片添加圆角 */
+    margin-bottom: 0.5rem; /* 图片与文字说明之间的间隔 */
+  }
+
+  .image-item p {
+    margin: 0; /* 移除段落默认的外边距 */
+  }
+
 
   .backdrop {
     position: fixed;
