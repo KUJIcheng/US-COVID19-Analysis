@@ -135,7 +135,7 @@
 
     // 根据SVG的大小动态计算缩放比例
     const scale = Math.min(width, height) * 2.05;
-    projection = d3.geoAlbersUsa().scale(scale).translate([width / 2, height / 2]);
+    projection = d3.geoAlbersUsa().scale(scale).translate([width * 0.55, height / 2]);
     const pathGenerator = d3.geoPath().projection(projection);
     const states = feature(us, us.objects.states).features;
 
@@ -153,6 +153,8 @@
     updateCircles(); // 绘制圆圈
     addColorLegend();
     addMortalityRateLegend();
+    addNestedDeathCountCirclesOptimized();
+    addRectangleAtTopLeft()
   }
 
   function updateMapColors() {
@@ -181,7 +183,7 @@
   // 绘制地图上的小圆的代码 <<---------
   function updateCircles() {
     // 确保移除旧的圆圈
-    d3.select(svg1).selectAll("circle").remove();
+    d3.select(svg1).selectAll("circle.class-name").remove();
 
     const currentDateData = dataByStateAndDate[selectedDateString] || {};
     const states = feature(us, us.objects.states).features;
@@ -199,6 +201,7 @@
       const color = mortalityRate ? d3.scaleLinear().domain([0, 0.08]).range(["#46BF98", "#BF46BD"])(mortalityRate) : "lightgrey"; // 如果没有死亡率，使用默认颜色lightgrey
 
       d3.select(svg1).append("circle")
+        .attr("class", "class-name")
         .attr("cx", center[0])
         .attr("cy", center[1])
         .attr("r", radius)
@@ -206,6 +209,7 @@
         .attr("fill-opacity", 0.75) // 设置半透明
         .attr("stroke", "none"); // 无边框
     });
+    addRectangleAtTopLeft()
   }
 
   function addColorLegend() {
@@ -329,7 +333,73 @@
       .attr("fill", "rgba(0,0,0,0.5)"); // 半透明的黑色文本
   }
 
-  
+  function addNestedDeathCountCirclesOptimized() {
+    const svgWidth = svg1.clientWidth;
+    const svgHeight = svg1.clientHeight;
+    const deathCounts = [2000, 5000, 10000].reverse(); // 死亡数，逆序以便从大到小绘制
+    const maxDeath = d3.max(deathCounts);
+
+    // 定义半径的比例尺
+    const radiusScale = d3.scaleSqrt().domain([0, maxDeath]).range([0, svgHeight * 0.06]);
+
+    // 最大圆的圆心Y坐标，位于SVG底部适当位置
+    let cy = svgHeight * 0.3 - radiusScale(maxDeath);
+
+    deathCounts.forEach((death, index) => {
+        const radius = radiusScale(death);
+        const cx = svgWidth * 0.002 + radius; // 圆心X坐标，保持在左侧并根据最大半径调整
+
+        // 绘制圆
+        d3.select(svg1).append("circle")
+            .attr("cx", cx)
+            .attr("cy", cy)
+            .attr("r", radius)
+            .attr("fill", "#D6DBDF")
+            .attr("stroke", "#5D6D7E")
+            .attr("stroke-width", "0.5");
+
+        // 添加死亡数标注
+        d3.select(svg1).append("text")
+            .attr("x", cx + radius + svgWidth * 0.0085)
+            .attr("y", cy + radius * 0.002) // 在圆上方一点位置添加标注
+            .text(`${death / 1000}k`)
+            .attr("text-anchor", "middle")
+            .style("font-size", "10px")
+            .attr("fill", "rgba(0,0,0,0.5)");
+    });
+
+    // 添加表示这些圆代表死亡数的标题
+    d3.select(svg1).append("text")
+        .attr("x", svgWidth * 0.05)
+        .attr("y", cy - radiusScale(maxDeath) - 12) // 在最大圆的上方添加标题
+        .text("Deaths Count(K)")
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .attr("fill", "rgba(0,0,0,0.5)");
+  }
+
+  function addRectangleAtTopLeft() {
+    const svgWidth = svg1.clientWidth;
+    const svgHeight = svg1.clientHeight;
+
+    // 计算矩形的宽度和高度，基于SVG的尺寸
+    const rectWidth = svgWidth * 0.05;
+    const rectHeight = svgHeight * 0.05;
+
+    // 计算矩形在SVG中的位置，位于左上角的1%位置
+    const rectX = - svgWidth * 0.006;
+    const rectY = 0;
+
+    // 添加矩形到SVG
+    d3.select(svg1).append("rect")
+        .attr("x", rectX)
+        .attr("y", rectY)
+        .attr("width", rectWidth)
+        .attr("height", rectHeight)
+        .attr("fill", "rgba(230,234,235,255)") // 使用指定的rgba颜色填充
+        .attr("stroke", "black") // 可选，如果需要矩形边框
+        .attr("stroke-width", "0"); // 可选，设置矩形边框的宽度
+  }
 
 
 
@@ -579,6 +649,8 @@
       .on("mouseout", mouseout) // 绑定鼠标移出事件
       .on("mousemove", mousemove); // 绑定鼠标移动事件
 
+    const tooptiphight = svg2.clientHeight;
+
     // 第一个事件
     // 将字符串日期转换为日期对象
     const targetDate = d3.timeParse("%Y-%m-%d")("2020-04-03");
@@ -616,8 +688,8 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block") // 显示工具提示
-                .style("left", (event.pageX - 20) + "px")
-                .style("top", (event.pageY + 20) + "px")
+                .style("left", (event.pageX - 50) + "px")
+                .style("top", (event.pageY - tooptiphight*0.5) + "px")
                 .html("2020-4-3: The White House Coronavirus Task Force and CDC recommended that persons wear a cloth face covering in public to slow the spread of COVID-19."); // 设置工具提示的内容
         })
         .on("mouseout", function() {
@@ -654,8 +726,8 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block")
-                .style("left", (event.pageX - 20) + "px")
-                .style("top", (event.pageY + 20) + "px")
+                .style("left", (event.pageX - 50) + "px")
+                .style("top", (event.pageY - tooptiphight*0.5) + "px")
                 .html("2021-1-20: President Joe Biden launched a COVID-19 plan focusing on vaccination, testing, and addressing health disparities. It included a $160 billion proposal for a national vaccination program and expanded testing.");
         })
         .on("mouseout", function() {
@@ -693,8 +765,8 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block")
-                .style("left", (event.pageX - 20) + "px")
-                .style("top", (event.pageY + 30) + "px")
+                .style("left", (event.pageX - 50) + "px")
+                .style("top", (event.pageY - tooptiphight*0.5) + "px")
                 .html("2021-11-26: WHO classified the Omicron variant, B.1.1.529, as a Variant of Concern due to its many mutations and potential higher reinfection risk, first identified in South Africa on November 24.​"); // 设置鼠标悬停时显示的文本
         })
         .on("mouseout", function() {
@@ -732,8 +804,8 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block")
-                .style("left", (event.pageX - 20) + "px") 
-                .style("top", (event.pageY + 20) + "px")
+                .style("left", (event.pageX - 50) + "px") 
+                .style("top", (event.pageY - tooptiphight*0.5) + "px")
                 .html("2022-2-25: CDC updated COVID-19 guidance to reflect reduced severity risks due to available treatments and vaccines, emphasizing the continued importance of vaccinations and updated protocols for exposure and infection management.​"); // 设置鼠标悬停时显示的文本
         })
         .on("mouseout", function() {
@@ -771,13 +843,48 @@
         .on("mouseover", function(event) {
             tooltipDiv
                 .style("display", "block")
-                .style("left", (event.pageX - 20) + "px")
-                .style("top", (event.pageY + 20) + "px")
+                .style("left", (event.pageX - 50) + "px")
+                .style("top", (event.pageY - tooptiphight*0.5) + "px")
                 .html("2022-8-11: CDC simplified COVID-19 guidance, emphasizing vaccines and updating protocols for exposure, without requiring quarantine but recommending masking and testing."); // 设置鼠标悬停时显示的文本
         })
         .on("mouseout", function() {
             tooltipDiv.style("display", "none"); // 鼠标移开时隐藏工具提示
         });
+    
+    const targetPercentage = 0.0015; // 目标百分比，0.15%
+    const iconPath6 = 'icon/icons8-virus-dna-64.png'; // 图标路径
+
+    // 计算百分之0.15%在右侧Y轴上的像素位置
+    const targetY = yScaleRight(targetPercentage);
+
+    // 绘制横向的虚线
+    svg.append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", targetY)
+      .attr("y2", targetY)
+      .style("stroke", "#F1948A") // 设置线条颜色
+      .style("stroke-width", "2px")
+      .style("stroke-dasharray", "5,5") // 定义虚线模式
+      .style("opacity", 0.7);
+
+    // 添加图标到右侧Y轴对应位置
+    svg.append("image")
+      .attr("xlink:href", iconPath6)
+      .attr("width", 32)
+      .attr("height", 32)
+      .attr("x", width + 27) // 略微偏移以防覆盖Y轴
+      .attr("y", targetY - 16) // 调整图标位置居中对齐虚线
+      .on("mouseover", function(event) {
+        tooltipDiv
+          .style("display", "block")
+          .style("left", (event.pageX - 80) + "px")
+          .style("top", (event.pageY - tooptiphight*0.25) + "px")
+          .html("The mortality rate of common influenza is 0.15%"); // 设置工具提示内容
+      })
+      .on("mouseout", function() {
+        tooltipDiv.style("display", "none");
+      });
   }
 
   function renderLineChartWithMortalityRateChange() {
@@ -887,7 +994,7 @@
 </script>
 
 
-<!---------- HTML的构成部分 ---------->
+<!---------- HTML的构成部分 这里写文案！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！---------->
 <div class="backdrop"></div>
 
 <div class="container">
@@ -899,7 +1006,7 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>What is "Big Events?"</h2>
-    <h3>"Big Events" include the U.S. government's macro policies on COVID-19, health recommendations from the World Health Organization (WHO), and the emergence of highly differentiated COVID variants. Here are two example of the "Big Events":</h3>
+    <h3>"Big Events" include the U.S. government's macro policies on COVID-19, health recommendations from the World Health Organization (WHO), and the emergence of highly differentiated COVID variants.These “Big Events” often represent major changes regarding the COVID-19 virus. They may indirectly affect the changing trend of COVID-19 in the United States. Therefore, they were included in the scope of our study to provide a comprehensive understanding of how these events influenced public health responses and the trajectory of the pandemic. Here are two example of the "Big Events":</h3>
   </div>
 
   <div class="image-container">
@@ -916,6 +1023,7 @@
   <div class="text-box" style="text-align: left;">
     <h2>COVID-19 on Macro-Level over Time:</h2>
     <h3>Before we embark on our journey of exploration, let's first pause to examine the broader transformations COVID-19 is undergoing on a macroscopic scale. This will provide us with a preliminary overview of the evolving situation across individual states over time.</h3>
+    <h3>Click "▶️ Play" to run the COVID Map below. And you also can click "⏸️ Pause" and drag the time bar to observe changes in COVID-19 over a certain period.</h3>
   </div>
 
   <div class="visualization">
@@ -984,7 +1092,7 @@
   </div>
 </div>
 
-<div id="tooltip" style="display: none; position: absolute; padding: 8px; background: white; border: none; border-radius: 3px; pointer-events: none;">Tooltip</div>
+<div id="tooltip" style="display: none; position: absolute; padding: 8px; background: rgba(255, 255, 255, 0.85); border: none; border-radius: 5px; pointer-events: none;">Tooltip</div>
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1072,13 +1180,13 @@
   }
 
   .controls {
-  display: flex;
-  flex-direction: row; /* 使内容水平排列 */
-  align-items: center; /* 横向居中对齐 */
-  padding: 1rem;
-  width: 60%; /* 调整为所需的百分比 */
-  gap: 40px; /* 控制内部元素之间的间距 */
-  margin-top: -4%; /* 向上移动 */
+    display: flex;
+    flex-direction: row; /* 使内容水平排列 */
+    align-items: center; /* 横向居中对齐 */
+    padding: 1rem;
+    width: 60%; /* 调整为所需的百分比 */
+    gap: 40px; /* 控制内部元素之间的间距 */
+    margin-top: -4%; /* 向上移动 */
   }
 
   .controls input[type="range"], .controls p {
