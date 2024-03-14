@@ -92,7 +92,7 @@
             target.style.transform = 'translateX(-100%)';
           }
         });
-      }, {threshold: 0.15});
+      }, {threshold: 0.07});
 
       document.querySelectorAll('.text-box').forEach((element) => {
         textObserver.observe(element);
@@ -1005,7 +1005,7 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>What is "Big Events?"</h2>
+    <h2>What is "Big Events?🤔"</h2>
     <h3>"Big Events" include the U.S. government's macro policies on COVID-19, health recommendations from the World Health Organization (WHO), and the emergence of highly differentiated COVID variants.These “Big Events” often represent major changes regarding the COVID-19 virus. They may indirectly affect the changing trend of COVID-19 in the United States. Therefore, they were included in the scope of our study to provide a comprehensive understanding of how these events influenced public health responses and the trajectory of the pandemic. Here are two example of the "Big Events":</h3>
   </div>
 
@@ -1021,9 +1021,16 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>COVID-19 on Macro-Level over Time:</h2>
+    <h2>COVID-19 on Macro-Level over Time 🌎:</h2>
     <h3>Before we embark on our journey of exploration, let's first pause to examine the broader transformations COVID-19 is undergoing on a macroscopic scale. This will provide us with a preliminary overview of the evolving situation across individual states over time.</h3>
-    <h3>Click "▶️ Play" to run the COVID Map below. And you also can click "⏸️ Pause" and drag the time bar to observe changes in COVID-19 over a certain period.</h3>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>How to Interact with the COVID-19 Map below:</h2>
+    <h3>Click "▶️ Play" to run the COVID Map below. And you also can click "⏸️ Pause" and drag the time bar⌛ to observe changes in COVID-19 over a certain period. The map records the following data on COVID-19 in each state from March 21, 2020 to March 23, 2023:</h3>
+    <h3>The color in each state represents the cumulative number of COVID-19 infections(M). 🤧
+      <br>The size of the circle represents the number of deaths(K) caused by COVID-19 in each state. 💀
+      <br>The color of the circle represents the Mortality Rate(%) in each state. ☣️</h3> 
   </div>
 
   <div class="visualization">
@@ -1039,7 +1046,28 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>What is the Map Above Tell?</h2>
-    <h3>Beginning in March 2020, the East Coast, notably New York, New Jersey, and Pennsylvania, experienced a surge in COVID-19 deaths. Through 2021, death counts rose across several states, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases. Thus, we would like to explore the details of the spread trajectory of COVID-19 in particular states, taking into account government policies and public health measures.</h3>
+    <h3>这段话可能要更有趣一些才行，如果需要可以搭配图片说明，就跟上面介绍big event一样放两张图在这段话下面: Beginning in March 2020, the East Coast, notably New York, New Jersey, and Pennsylvania, experienced a surge in COVID-19 deaths. Through 2021, death counts rose across several states, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases. Thus, we would like to explore the details of the spread trajectory of COVID-19 in particular states, taking into account government policies and public health measures.</h3>
+  </div>
+
+  <div class="image-container">
+    <div class="image-item">
+      <img src="pictures/event1.jpg" alt="Event 1">
+      <p>CDC release anti-epidemic guidance</p>
+    </div>
+    <div class="image-item">
+      <img src="pictures/event2.jpg" alt="Event 2">
+      <p>Omicron was discovered in US</p>
+    </div>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>COVID-19 on Micro-Level, What Happen in California🐻over Time?</h2>
+    <h3>Let’s choose California as our study subject to delve more deeply into the evolution of COVID-19 by using a Line Chart.📈. (往下续写为什么使用line chart以及一些新的额外的内容，你们可以想想看)</h3>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>How to Interact with the Line Chart below:</h2>
+    <h3>(介绍line chart 功能)</h3>
   </div>
 
   <div class="controls">
@@ -1055,13 +1083,13 @@
   </div>
   
   <div class="text-box" style="text-align: left;">
-    <h2>COVID Tendency in Each State:</h2>
-    <h3>This line chart primarily showcases the progression of COVID-19 cases and mortality rates over the years within a chosen state. The left y-axis delineates the cases recorded each month, while the right y-axis corresponds to the mortality rate for the same period. By scrutinizing specific states' line charts, notable disparities emerge at certain time intervals between cases and mortality rates. Consequently, we integrated small icons, such as masks and vaccination symbols, to highlight significant developments throughout the years. Examining the overall trends, a pivotal shift becomes apparent towards the end of 2020. This pivotal moment can be attributed to the widespread distribution of vaccinations and the evolving nature of the COVID-19 virus, which appears to exhibit reduced virulence alongside its escalating spread.</h3>
+    <h2>Evolution of COVID-19 in California🐻:</h2>
+    <h3>(这里重新写成关于加州的分析)This line chart primarily showcases the progression of COVID-19 cases and mortality rates over the years within a chosen state. The left y-axis delineates the cases recorded each month, while the right y-axis corresponds to the mortality rate for the same period. By scrutinizing specific states' line charts, notable disparities emerge at certain time intervals between cases and mortality rates. Consequently, we integrated small icons, such as masks and vaccination symbols, to highlight significant developments throughout the years. Examining the overall trends, a pivotal shift becomes apparent towards the end of 2020. This pivotal moment can be attributed to the widespread distribution of vaccinations and the evolving nature of the COVID-19 virus, which appears to exhibit reduced virulence alongside its escalating spread.</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
     <h2>The Effect of the "Big Events":</h2>
-    <h3>The description of the big events, how it effect to the covid tendency.</h3>
+    <h3></h3>
   </div>
 
   <div class="visualization">
@@ -1222,12 +1250,12 @@
 
   .state-selector {
     width: 100%; /* 放大选择框 */
-    max-width: 400px; /* 最大宽度 */
+    max-width: 300px; /* 最大宽度 */
     height: 40px; /* 增加高度 */
     border-radius: 5px;
     font-size: 16px; /* 字体大小 */
     margin: 20px auto; /* 居中显示 */
-    margin-bottom: 0px;
+    margin-bottom: -20px;
     margin-top: 70px;
     background-color: #EAEDED; /* 默认的浅色背景 */
     transition: background-color 0.3s; /* 平滑的背景色过渡效果 */
