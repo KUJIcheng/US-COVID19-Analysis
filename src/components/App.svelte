@@ -1045,20 +1045,35 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>What is the Map Above Tell?</h2>
-    <h3>这段话可能要更有趣一些才行，如果需要可以搭配图片说明，就跟上面介绍big event一样放两张图在这段话下面: Beginning in March 2020, the East Coast, notably New York, New Jersey, and Pennsylvania, experienced a surge in COVID-19 deaths. Through 2021, death counts rose across several states, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases. Thus, we would like to explore the details of the spread trajectory of COVID-19 in particular states, taking into account government policies and public health measures.</h3>
-  </div>
+    <h2>What does the Map Above Tell?</h2>
+    <h3>Starting from March 2020, A shadow fell over the East Coast as New York, New Jersey, and Pennsylvania became the first battlefields in America's war against an invisible enemy. Let's take a closer look at the spread trajectories of different COVID-19 variants 🦠 in the states.</h3>
+
+    <h3>The first highly publicized variant—B.1.1.7, then called Alpha—showed up in the United Kingdom in September 2020. This variant sparked a global surge in COVID infections, striking at a time when the world was still awaiting the arrival of vaccines.</h3>
+
+    <h3>Soon after Alpha's detection, the Beta variant (B.1.351) emerged in South Africa, boasting a 50% higher transmission rate, as cited by the Centers for Disease Control and Prevention (CDC). The three main vaccines 💉 offered in the U.S.—Pfizer, Moderna, and J&J—were effective against Beta.</h3> 
+
+    <h3>The Delta variant (B.1.617.2), emerging in the spring of 2021, swiftly became prevalent in India before spreading to over 130 countries, triggering a lethal global COVID wave. It led to more severe illness and higher hospitalization rates among the unvaccinated than other variants.</h3>
+
+    <h3>The original Omicron variant identified in late November 2021 was highly transmissible, but some studies showed that it caused milder infections and people were less likely to be hospitalized with COVID if they were infected with the strain.</h3>
+</div>
+
 
   <div class="image-container">
     <div class="image-item">
-      <img src="pictures/event1.jpg" alt="Event 1">
-      <p>CDC release anti-epidemic guidance</p>
+      <img src="pictures/variants.png" alt="Event 1">
+      <p>Alpha, Beta, Gamma, Delta, Omicron: COVID-19 Variants</p>
     </div>
     <div class="image-item">
-      <img src="pictures/event2.jpg" alt="Event 2">
-      <p>Omicron was discovered in US</p>
+      <img src="pictures/deltatxt.png" alt="Event 2">
+      <p>Delta variant (B.1.617.2), emerging in the spring of 2021</p>
     </div>
   </div>
+
+<div class="text-box" style="text-align: left;">
+    <h3>Through 2021, death counts rose across several states 🇺🇸, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases.
+</h3>
+</div>
+
 
   <div class="text-box" style="text-align: left;">
     <h2>COVID-19 on Micro-Level, What Happen in California🐻over Time?</h2>
@@ -1101,19 +1116,20 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>How Death Rate Change Over Time:</h2>
-    <h3>The graph illustrates the rate of change in mortality over a timeline from 2021 to 2023. There was a significant spike in April 2020, indicating a sharp increase in mortality rate corresponding to the surge in COVID-19 deaths at that time. This is followed by fluctuations above and below the baseline, but the overall trend shows a decrease in mortality rate as the fluctuations become less pronounced over time. The arrival of the Omicron variant in November 2021 correlated with an uptick in infection rates, yet mortality rates remained comparatively steady. This stability in mortality could suggest a lower severity of the Omicron variant compared to its predecessors.
+    <h3>The graph illustrates the rate of change in mortality over a timeline from 2021 to 2023. There was a significant spike in April 2020, indicating a sharp increase in mortality rate corresponding to the surge in COVID-19 deaths at that time. This is followed by fluctuations above and below the baseline, but the overall trend shows a decrease in mortality rate as the fluctuations become less pronounced over time.  </h3>
+    
+    <h3>The arrival of the Omicron variant in November 2021 correlated with an uptick in infection rates, yet mortality rates remained comparatively steady. This stability in mortality could suggest a lower severity of the Omicron variant compared to its predecessors.
       By October 2022, the rate appears to have stabilized near the baseline, suggesting that the mortality rate changes have significantly reduced or normalized compared to the initial spike.
-      </h3>
+    </h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>What does a reduced oscillation in the rate of change of mortality tell:</h2>
+    <h2>What does a reduced oscillation in the rate of change of mortality tell us?</h2>
     <h3>Analysis of the changing rate of the death rate</h3>
-  </div>
 
-  <div class="text-box" style="text-align: left;">
-    <h2>What does a reduced oscillation in the rate of change of mortality tell:</h2>
-    <h3>Analysis of the changing rate of the death rate</h3>
+  <h3>The graph's trend of reduced oscillation suggests a stabilization of the situation; the mortality rate from COVID-19 is becoming more predictable and less volatile over time. It could indicate that, while infections may continue, the impact on mortality has lessened—potentially due to factors like widespread vaccination and booster shots, improved treatment protocols, or the emergence of less lethal virus variants like Omicron. This stabilization near the baseline by October 2022 could imply that mortality rates have reached a level consistent with endemic conditions.
+  </h3>
+
   </div>
 
   <div class="text-box" style="text-align: left;">
