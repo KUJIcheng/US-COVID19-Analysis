@@ -1062,7 +1062,7 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>COVID-19 on Micro-Level, What Happen in California🐻over Time?</h2>
-    <h3>After observing the COVID-19 trend in the entire United States, it’s time to discuss the info within the specific state. Let’s choose California as our study subject to delve more deeply into the evolution of COVID-19 by using a Line Chart.📈. (往下续写为什么使用line chart以及一些新的额外的内容，你们可以想想看)</h3>
+    <h3>After observing the COVID-19 trend in the entire United States, it’s time to discuss the info within the specific state. Let’s choose California as our study subject to delve more deeply into the evolution of COVID-19 by using a Line Chart.📈.</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
