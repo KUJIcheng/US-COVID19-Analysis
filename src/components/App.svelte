@@ -1067,7 +1067,9 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>How to Interact with the Line Chart below:</h2>
-    <h3>(介绍line chart 功能)</h3>
+    <h3>Search bar: choose the state you are interested in. 
+      <br>Small icons: highlight significant policies throughout the years. (eg. masks, vaccination symbols) 
+      <br>The setting of the y-axis: The left y-axis delineates the cases recorded each month. The right y-axis corresponds to the mortality rate for the same period.</h3>
   </div>
 
   <div class="controls">
@@ -1084,7 +1086,7 @@
   
   <div class="text-box" style="text-align: left;">
     <h2>Evolution of COVID-19 in California🐻:</h2>
-    <h3>This line chart primarily showcases the progression of COVID-19 cases and mortality rates in California over the years. The left y-axis delineates the cases recorded each month, while the right y-axis corresponds to the mortality rate for the same period. By scrutinizing California's line chart, notable disparities emerge at certain time intervals in cases and mortality rates. Consequently, we integrated small icons, such as masks and vaccination symbols, to highlight significant policies throughout the years. Examining the overall trends in California, a pivotal shift becomes apparent towards the end of 2020. This pivotal moment can be attributed to the widespread distribution of vaccinations and the evolving nature of the COVID-19 virus. As we follow the trends on the line chart, this virus appears to exhibit reduced virulence alongside its escalating spread.</h3>
+    <h3>This line chart primarily showcases the progression of COVID-19 cases and mortality rates in California over the years. By scrutinizing California's line chart, notable disparities emerge at certain time intervals in cases and mortality rates. Examining the overall trends in California, a pivotal shift becomes apparent towards the end of 2020. This pivotal moment can be attributed to the widespread distribution of vaccinations and the evolving nature of the COVID-19 virus. As we follow the trends on the line chart, this virus appears to exhibit reduced virulence alongside its escalating spread.</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
