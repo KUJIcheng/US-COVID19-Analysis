@@ -1069,7 +1069,8 @@
     <h2>How to Interact with the Line Chart below:</h2>
     <h3>Search bar: choose the state you are interested in. 
       <br>Small icons: highlight significant policies throughout the years. (eg. masks, vaccination symbols) 
-      <br>The setting of the y-axis: The left y-axis delineates the cases recorded each month. The right y-axis corresponds to the mortality rate for the same period.</h3>
+      <br>The setting of the y-axis: The left y-axis delineates the cases recorded each month. The right y-axis corresponds to the mortality rate for the same period.
+      <br>Data of point: hover over the point, there are data there.</h3>
   </div>
 
   <div class="controls">
