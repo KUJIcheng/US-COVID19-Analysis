@@ -1043,7 +1043,7 @@
   <div class="text-box" style="text-align: left;">
     <h2>What does the COVID-19 Map above Tell?</h2>
     <h3>Although the pandemic's trajectory seems chaotic across different states in the United States, we can still discern some common patterns among them. In the early stages of COVID-19's spread within the country, the mortality rate was exceptionally high in various states. However, as the number of infections increased, the mortality rate gradually decreased.</h3>
-    <h3>It is noteworthy that the evolution of the pandemic does not seem to correlate with time. In other words, there appear to be certain "Big Events" influencing the progression of COVID-19 across the states, causing fluctuations in the pandemic's trajectory at certain periods on a macro level.</h3>
+    <h3>It is noteworthy that the evolution of the pandemic does not seem to correlate with time. In other words, there appear to be certain "Big Events"💣 influencing the progression of COVID-19 across the states, causing fluctuations in the pandemic's trajectory at certain periods on a macro level.</h3>
     <h4>Therefore, taking "Big Events" into consideration is essential!🔥</h4>
   </div>
 
@@ -1092,12 +1092,24 @@
   
   <div class="text-box" style="text-align: left;">
     <h2>Trajectory of COVID-19 in California🐻:</h2>
-    <h3>XXX</h3>
+    <h3>Similar to what is depicted in the COVID-19 Map above, the mortality rate experienced a terrifying surge in the early stages of the COVID-19 spread. As the number of infections increased, the mortality rate of COVID-19 gradually decreased. However, this time, we can more intuitively see how these "Big Events" have influenced the evolution of COVID-19.</h3>
+    <h3>Protective policies🛡️ and enhancements in healthcare coverage🚑, acting as "Big Events," can significantly reduce mortality rates and decelerate the growth of infection numbers. Conversely, virus mutations, also considered "Big Events," have led to spikes in infection rates📈 and steep declines in mortality rates📉.</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>The Effect of the "Big Events":</h2>
-    <h3>XXX</h3>
+    <h2>The Effect of the "Big Events"💣:</h2>
+    <h3>Beyond the data for California, let us broaden our view to observe the line graph data across various states. It is noteworthy that "Big Events" have synchronized and similar effects on the COVID-19 evolution in different states. In other words, the concurrent impact of "Big Events" across states implies, on one hand, the commendable synchronicity in the implementation of pandemic prevention policies among the states. On the other hand, it also highlights the constant presence of internal mobility within the United States throughout the entire period of COVID-19.</h3>
+    <h3>The infection slowdown📉 brought about by protective "Big Events" indirectly demonstrates that macro-level policies indeed can provide a safer environment for the residents of the United States, reducing the threat of the virus.</h3>
+  </div>
+
+  <div class="title-box">
+    <h1>Therefore,<br>Is the Threat of COVID-19<br> DIMINISHING <br>in the United States?<br></h1>
+    <h2>Exploration of COVID-19's Evolution in the United States and the Impact of "Big Events"</h2>
+  </div>
+
+  <div class="text-box" style="text-align: left;">
+    <h2>Yes✔️, but No❌:</h2>
+    <h3>Indeed, compared to the early stages of the outbreak, COVID-19 has now become more stable and boasts a significantly lower mortality rate. Moreover, the trend of decreasing mortality rates persists, as the rate of change in mortality was consistently negative in the period leading up to the cessation of public COVID-19 data reporting in the United States. This indicates that, over time, the threat of COVID-19 to human health will continue to diminish further.</h3>
   </div>
 
   <div class="visualization">
@@ -1105,21 +1117,25 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>How Mortality Rate Change Over Time:</h2>
-    <h3>The graph illustrates the rate of change in mortality over a timeline from 2021 to 2023. There was a significant spike in April 2020, indicating a sharp increase in mortality rate corresponding to the surge in COVID-19 deaths at that time. This is followed by fluctuations above and below the baseline, but the overall trend shows a decrease in mortality rate as the fluctuations become less pronounced over time.  </h3>
-    
-    <h3>The arrival of the Omicron variant in November 2021 correlated with an uptick in infection rates, yet mortality rates remained comparatively steady. This stability in mortality could suggest a lower severity of the Omicron variant compared to its predecessors.
-      By October 2022, the rate appears to have stabilized near the baseline, suggesting that the mortality rate changes have significantly reduced or normalized compared to the initial spike.
-    </h3>
+    <h3>On the other hand, we must remain vigilant, as the current threat posed by COVID-19 to human health is significantly greater than that of the common seasonal flu🦠. In comparison, COVID-19 has a mortality rate that far exceeds that of seasonal influenza. Furthermore, the impact of COVID-19 on the human body is formidable. Long COVID😷 continues to erode people's health persistently. Moreover, as a coronavirus, COVID-19's potential for mutation is much higher than that of viruses with simpler structures, introducing greater uncertainty into the efficacy of vaccines.</h3>
+  </div>
+
+  <div class="image-container">
+    <div class="image-item">
+      <img src="pictures/variants.png" alt="Event 1">
+      <br>
+      <a href="https://www.cdc.gov/coronavirus/2019-ncov/variants/cdc-role-surveillance.html" target="_blank">COVID-19 variants</a>
+    </div>
+    <div class="image-item">
+      <img src="pictures/event3.jpg" alt="Event 2">
+      <br>
+      <a href="https://www.cdc.gov/coronavirus/2019-ncov/long-term-effects/index.html" target="_blank">Long COVID</a>
+    </div>
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>What does a reduced oscillation in the rate of change of mortality tell us?</h2>
-    <h3>Analysis of the changing rate of the mortality rate</h3>
-
-  <h3>The graph's trend of reduced oscillation suggests a stabilization of the situation; the mortality rate from COVID-19 is becoming more predictable and less volatile over time. It could indicate that, while infections may continue, the impact on mortality has lessened—potentially due to factors like widespread vaccination and booster shots, improved treatment protocols, or the emergence of less lethal virus variants like Omicron. This stabilization near the baseline by October 2022 could imply that mortality rates have reached a level consistent with endemic conditions.
-  </h3>
-
+    <h2>What can We do?</h2>
+    <h3>xxx</h3>
   </div>
 </div>
 
