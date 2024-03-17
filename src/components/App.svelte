@@ -1127,7 +1127,8 @@
   </div>
 
   <div class="controls">
-    <select bind:value={selectedState} class="state-selector">
+    <label for="stateSelector">State Selector:</label>
+    <select id="stateSelector" bind:value={selectedState} class="state-selector">
       {#each states as state}
         <option value="{state}">{state}</option>
       {/each}
@@ -1307,6 +1308,15 @@
 
   .controls p::before {
     content: "Date: ";
+  }
+
+  .controls label {
+    display: block; /* 如果需要，确保label作为块级元素显示 */
+    font-size: 16px; /* 可以匹配选择器的字体大小以保持一致性 */
+    margin: 20px auto; /* 居中显示 */
+    margin-bottom: -20px;
+    margin-top: 70px;
+    margin-right: -120px
   }
 
   .state-selector {
