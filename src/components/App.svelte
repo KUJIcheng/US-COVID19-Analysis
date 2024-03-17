@@ -1005,18 +1005,14 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>What is "Big Events?🤔"</h2>
-    <h3>"Big Events" include the U.S. government's macro policies on COVID-19, health recommendations from the World Health Organization (WHO), and the emergence of highly differentiated COVID variants.These “Big Events” often represent major changes regarding the COVID-19 virus. They may indirectly affect the changing trend of COVID-19 in the United States. Therefore, they were included in the scope of our study to provide a comprehensive understanding of how these events influenced public health responses and the trajectory of the pandemic. Here are two example of the "Big Events":</h3>
+    <h2>Since March 23, 2023, USCIS announced the termination of COVID-related flexibilities, signaling that the United States will cease the collection and publication of data related to COVID-19 thereafter. <br> However, does this mean COVID-19 has truly left us behind, or is it no longer worthy of our attention and vigilance?</h2>
   </div>
 
   <div class="image-container">
     <div class="image-item">
-      <img src="pictures/event1.jpg" alt="Event 1">
-      <p>CDC release anti-epidemic guidance</p>
-    </div>
-    <div class="image-item">
-      <img src="pictures/event2.jpg" alt="Event 2">
-      <p>Omicron was discovered in US</p>
+      <img src="pictures/CDC.png" alt="Event 1">
+      <br>
+      <a href="https://www.uscis.gov/newsroom/alerts/uscis-announces-end-of-covid-related-flexibilities" target="_blank">USCIS Announces End of COVID-Related Flexibilities</a>
     </div>
   </div>
 
@@ -1045,47 +1041,41 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>What does the Map Above Tell?</h2>
-    <h3>Starting from March 2020, A shadow fell over the East Coast as New York, New Jersey, and Pennsylvania became the first battlefields in America's war against an invisible enemy. Let's take a closer look at the spread trajectories of different COVID-19 variants 🦠 in the states.</h3>
+    <h2>What does the COVID-19 Map above Tell?</h2>
+    <h3>Although the pandemic's trajectory seems chaotic across different states in the United States, we can still discern some common patterns among them. In the early stages of COVID-19's spread within the country, the mortality rate was exceptionally high in various states. However, as the number of infections increased, the mortality rate gradually decreased.</h3>
+    <h3>It is noteworthy that the evolution of the pandemic does not seem to correlate with time. In other words, there appear to be certain "Big Events" influencing the progression of COVID-19 across the states, causing fluctuations in the pandemic's trajectory at certain periods on a macro level.</h3>
+    <h4>Therefore, taking "Big Events" into consideration is essential!🔥</h4>
+  </div>
 
-    <h3>The first highly publicized variant—B.1.1.7, then called Alpha—showed up in the United Kingdom in September 2020. This variant sparked a global surge in COVID infections, striking at a time when the world was still awaiting the arrival of vaccines.</h3>
-
-    <h3>Soon after Alpha's detection, the Beta variant (B.1.351) emerged in South Africa, boasting a 50% higher transmission rate, as cited by the Centers for Disease Control and Prevention (CDC). The three main vaccines 💉 offered in the U.S.—Pfizer, Moderna, and J&J—were effective against Beta.</h3> 
-
-    <h3>The Delta variant (B.1.617.2), emerging in the spring of 2021, swiftly became prevalent in India before spreading to over 130 countries, triggering a lethal global COVID wave. It led to more severe illness and higher hospitalization rates among the unvaccinated than other variants.</h3>
-
-    <h3>The original Omicron variant identified in late November 2021 was highly transmissible, but some studies showed that it caused milder infections and people were less likely to be hospitalized with COVID if they were infected with the strain.</h3>
-</div>
-
+  <div class="text-box" style="text-align: left;">
+    <h2>So, What is "Big Events?🤔"</h2>
+    <h3>"Big Events" include the U.S. government's macro policies on COVID-19, health recommendations from the World Health Organization (WHO), and the emergence of highly differentiated COVID variants.These “Big Events” often represent major changes regarding the COVID-19 virus. They may indirectly affect the changing trend of COVID-19 in the United States. Therefore, they were included in the scope of our study to provide a comprehensive understanding of how these events influenced public health responses and the trajectory of the pandemic. Here are two example of the "Big Events":</h3>
+  </div>
 
   <div class="image-container">
     <div class="image-item">
-      <img src="pictures/variants.png" alt="Event 1">
-      <p>Alpha, Beta, Gamma, Delta, Omicron: COVID-19 Variants</p>
+      <img src="pictures/event1.jpg" alt="Event 1">
+      <br>
+      <a href="https://www.cdc.gov/mmwr/volumes/69/wr/mm6949e2.htm" target="_blank">CDC release anti-epidemic guidance</a>
     </div>
     <div class="image-item">
-      <img src="pictures/deltatxt.png" alt="Event 2">
-      <p>Delta variant (B.1.617.2), emerging in the spring of 2021</p>
+      <img src="pictures/event2.jpg" alt="Event 2">
+      <br>
+      <a href="https://www.cdc.gov/ncird/whats-new/covid-19-variant-update-2023-08-30.html" target="_blank">Omicron was discovered in US</a>
     </div>
   </div>
 
-<div class="text-box" style="text-align: left;">
-    <h3>Through 2021, death counts rose across several states 🇺🇸, including California, Texas, Illinois, and Florida; however, mortality rates showed a relative decline, indicated by lighter-shaded circles. Case numbers spiked, particularly in California, Texas, and Florida, towards late 2021. In the end, we observe that California, Florida, Texas, and New York have the highest numbers of cases and possibly death cases.
-</h3>
-</div>
-
-
   <div class="text-box" style="text-align: left;">
-    <h2>COVID-19 on Micro-Level, What Happen in California🐻over Time?</h2>
-    <h3>After observing the COVID-19 trend in the entire United States, it’s time to discuss the info within the specific state. Let’s choose California as our study subject to delve more deeply into the evolution of COVID-19 by using a Line Chart.📈.</h3>
+    <h2>Let's Zoom in! COVID-19 on Micro-Level, What Happen in California🐻over Time?</h2>
+    <h3>After observing the COVID-19 trend in the entire United States, it's time to discuss the info within the specific state. Let's choose California as our study subject to delve more deeply into the evolution of COVID-19 by using a Line Chart.📈, a visualization that allow us to explore the evolution and tendency of COVID-19 over time.</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
     <h2>How to Interact with the Line Chart below:</h2>
-    <h3>Search bar: choose the state you are interested in. 
-      <br>Small icons: highlight significant policies throughout the years. (eg. masks, vaccination symbols) 
-      <br>The setting of the y-axis: The left y-axis delineates the cases recorded each month. The right y-axis corresponds to the mortality rate for the same period.
-      <br>Data of point: hover over the point, there are data there.</h3>
+    <h3>We are primarily focusing on the trajectory of COVID-19 in California🐻, which is set as the default option. However, we also offer alternatives for tracking the pandemic in other states.</h3>
+    <h3>🔎State Selector: Picking one state to explore its COVID-19's trajectory with the "Big Events" time line.
+      <br>📅"Big Events" Icon: Some "Big Events" we have collected, hovering them to see more information.
+      <br>👆🏻Hovering the mouse over the line chart allows observation of the infection numbers and mortality rate for corresponding dates.</h3>
   </div>
 
   <div class="controls">
@@ -1101,13 +1091,13 @@
   </div>
   
   <div class="text-box" style="text-align: left;">
-    <h2>Evolution of COVID-19 in California🐻:</h2>
-    <h3>This line chart primarily showcases the progression of COVID-19 cases and mortality rates in California over the years. By scrutinizing California's line chart, notable disparities emerge at certain time intervals in cases and mortality rates. Examining the overall trends in California, a pivotal shift becomes apparent towards the end of 2020. This pivotal moment can be attributed to the widespread distribution of vaccinations and the evolving nature of the COVID-19 virus. As we follow the trends on the line chart, this virus appears to exhibit reduced virulence alongside its escalating spread.</h3>
+    <h2>Trajectory of COVID-19 in California🐻:</h2>
+    <h3>XXX</h3>
   </div>
 
   <div class="text-box" style="text-align: left;">
     <h2>The Effect of the "Big Events":</h2>
-    <h3></h3>
+    <h3>XXX</h3>
   </div>
 
   <div class="visualization">
@@ -1115,7 +1105,7 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>How Death Rate Change Over Time:</h2>
+    <h2>How Mortality Rate Change Over Time:</h2>
     <h3>The graph illustrates the rate of change in mortality over a timeline from 2021 to 2023. There was a significant spike in April 2020, indicating a sharp increase in mortality rate corresponding to the surge in COVID-19 deaths at that time. This is followed by fluctuations above and below the baseline, but the overall trend shows a decrease in mortality rate as the fluctuations become less pronounced over time.  </h3>
     
     <h3>The arrival of the Omicron variant in November 2021 correlated with an uptick in infection rates, yet mortality rates remained comparatively steady. This stability in mortality could suggest a lower severity of the Omicron variant compared to its predecessors.
@@ -1125,17 +1115,11 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>What does a reduced oscillation in the rate of change of mortality tell us?</h2>
-    <h3>Analysis of the changing rate of the death rate</h3>
+    <h3>Analysis of the changing rate of the mortality rate</h3>
 
   <h3>The graph's trend of reduced oscillation suggests a stabilization of the situation; the mortality rate from COVID-19 is becoming more predictable and less volatile over time. It could indicate that, while infections may continue, the impact on mortality has lessened—potentially due to factors like widespread vaccination and booster shots, improved treatment protocols, or the emergence of less lethal virus variants like Omicron. This stabilization near the baseline by October 2022 could imply that mortality rates have reached a level consistent with endemic conditions.
   </h3>
 
-  </div>
-
-  <div class="text-box" style="text-align: left;">
-    <h1>Conclusion:</h1>
-    <h3>Our exploration of COVID-19's impact across the USA highlights key trends, including an initial death surge on the East Coast in early 2020, followed by a reduction in mortality rates despite case surges in states like California, Texas, and Florida through 2021. This pattern suggests improvements in treatments and interventions. A notable shift towards reduced virus impact was observed by the end of 2020, aligning with vaccination efforts, indicating a weakening in the virus's effect due to reduced virulence and increased spread.</h3>
-    <h3>Analysis from 2021 to 2023 shows mortality rate fluctuations with a general downward trend, stabilizing by October 2022, despite the Omicron variant's emergence in November 2021 leading to higher infection rates but steady mortality rates, hinting at its lower severity. The dynamic between government policies, public health measures, and COVID-19's trajectory underscores the importance of detailed spread analysis and policy response understanding to navigate future challenges and mitigate ongoing pandemic impacts.</h3>
   </div>
 </div>
 
@@ -1202,6 +1186,11 @@
       font-weight: 500; /* Oswald的常规权重 */
   }
 
+  .title-box h3 {
+      font-size: 1.5rem; /* 根据需要调整副标题的大小 */
+      font-weight: 500; /* Oswald的常规权重 */
+  }
+
 
   .text-box {
     width: 70%; /* 与可视化组件宽度一致 */
@@ -1224,6 +1213,11 @@
   .text-box h3 {
       font-size: 1.3rem; /* 根据需要调整副标题的大小 */
       font-weight: 420; /* Oswald的常规权重 */
+  }
+
+  .text-box h4 {
+      font-size: 1.3rem; /* 根据需要调整副标题的大小 */
+      font-weight: 900; /* Oswald的常规权重 */
   }
 
   .controls {
