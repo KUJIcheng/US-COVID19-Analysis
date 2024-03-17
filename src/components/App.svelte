@@ -1165,7 +1165,7 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h3>On the other hand, we must remain vigilant, as the current threat posed by COVID-19 to human health is significantly greater than that of the common seasonal flu🦠 <a href="#svg2"> C19-IMR</a>. In comparison, COVID-19 has a mortality rate that far exceeds that of seasonal influenza. Furthermore, the impact of COVID-19 on the human body is formidable. Long COVID😷 continues to erode people's health persistently. Moreover, as a coronavirus, COVID-19's potential for mutation is much higher than that of viruses with simpler structures, introducing greater uncertainty into the efficacy of vaccines.</h3>
+    <h3>On the other hand, we must remain vigilant, as the current threat posed by COVID-19 to human health is significantly greater than that of the common seasonal flu🦠. In comparison, COVID-19 has a mortality rate that far exceeds that of seasonal influenza. <a href="#svg2"> C19-IMR</a> Furthermore, the impact of COVID-19 on the human body is formidable. Long COVID😷 continues to erode people's health persistently. Moreover, as a coronavirus, COVID-19's potential for mutation is much higher than that of viruses with simpler structures, introducing greater uncertainty into the efficacy of vaccines.</h3>
   </div>
 
   <div class="image-container">
