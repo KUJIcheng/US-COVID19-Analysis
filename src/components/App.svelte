@@ -505,6 +505,22 @@
       .call(yAxisGrid)
       .attr("stroke-opacity", 0.2) // 设置虚线的透明度
       .attr("stroke-dasharray", "2,2"); // 设置虚线的样式
+    
+    svg.append("text")
+      .attr("transform", "rotate(-90)") // 旋转标签，使之垂直
+      .attr("y", 0 - margin.left) // 根据margin调整位置
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em") // 微调位置
+      .style("text-anchor", "middle") // 文本居中
+      .text("number of cases");
+    
+    svg.append("text")
+      .attr("transform", "rotate(-90)") // 旋转标签，使之垂直
+      .attr("y", width * 1.05) // 根据margin调整位置
+      .attr("x", 0 - (height * 0.5))
+      .attr("dy", "1em") // 微调位置
+      .style("text-anchor", "middle") // 文本居中
+      .text("mortality rate(%)");
 
     // 线条生成器 for cases
     const lineCases = d3.line()
@@ -888,23 +904,22 @@
   }
 
   function renderLineChartWithMortalityRateChange() {
-    const margin = { top: 20, right: 80, bottom: 20, left: 80 },
+    const margin = { top: 40, right: 80, bottom: 10, left: 80 },
           width = svg3.clientWidth - margin.left - margin.right,
           height = svg3.clientHeight - margin.top - margin.bottom;
-    
+
     const filteredData = Object.entries(dataByStateAndDate)
       .filter(([date]) => {
         const day = new Date(date).getDate();
         return day === 21; // 仅选择每月21号的数据
       })
       .map(([date, statesData]) => {
-        // 计算所有州的mortalityRateChange的平均值
-        const allStates = Object.values(statesData); // 获取所有州的数据
+        const allStates = Object.values(statesData);
         const averageMortalityRateChange = allStates.reduce((sum, curr) => sum + (curr.mortalityRateChange || 0), 0) / allStates.length;
 
         return {
           date: d3.timeParse("%Y-%m-%d")(date),
-          mortalityRateChange: averageMortalityRateChange // 使用计算出的平均死亡率变化率
+          mortalityRateChange: averageMortalityRateChange
         };
       });
 
@@ -924,60 +939,83 @@
                     .range([height, 0])
                     .domain([-0.028, 0.028]);
 
-    // 定义x轴和y轴
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale)
-                    .tickFormat(d3.format(".0%")); // 将刻度格式化为百分比
+                    .tickFormat(d3.format(".0%"));
 
-    // 绘制x轴
     svg.append("g")
-      .attr("transform", `translate(0, ${height / 2})`) // x轴放在中间
+      .attr("transform", `translate(0, ${height / 2})`)
       .call(xAxis);
 
-    // 绘制y轴
     svg.append("g")
       .call(yAxis);
-    
-    // 添加横向虚线
+
+    svg.append("text")
+       .attr("x", width / 2) // 将标题放在中间
+       .attr("y", -10) // 在顶部边距内，上移一点以避免与图表内容重叠
+       .attr("text-anchor", "middle") // 确保文本居中对齐
+       .style("font-size", "16px") // 设置字体大小
+       .text("Growth rate of COVID-19 mortality rate(%)"); // 设置标题文本
+
     svg.append("g")
        .attr("class", "grid")
        .call(d3.axisLeft(yScale)
-             .tickSize(-width) // 横跨整个图表的宽度
-             .tickFormat("") // 不显示刻度文本
+             .tickSize(-width)
+             .tickFormat("")
        )
-       .attr("stroke-dasharray", "2,2") // 设置为虚线
-       .attr("stroke-opacity", 0.7) // 可以调整虚线的透明度
-       .selectAll(".tick line") // 选择所有的刻度线
-       .attr("stroke", "lightgrey"); // 设置虚线的颜色
+       .attr("stroke-dasharray", "2,2")
+       .attr("stroke-opacity", 0.7)
+       .selectAll(".tick line")
+       .attr("stroke", "lightgrey");
+    // 添加矩形框来标记时间范围
+    const startDate = new Date("2022-05-01"); // 矩形开始日期
+    const endDate = new Date("2023-03-31"); // 矩形结束日期
 
-    // 定义线条生成器
+    svg.append("rect")
+       .attr("x", xScale(startDate))
+       .attr("width", xScale(endDate) - xScale(startDate))
+       .attr("y", height*0.25)
+       .attr("height", height*0.5)
+       .attr("fill", "pink") // 设置矩形框的颜色
+       .attr("opacity", 0.3); // 设置透明度
+
+    // 在矩形框上方添加文本
+    svg.append("text")
+       .attr("x", (xScale(startDate) + xScale(endDate)) / 2)
+       .attr("y", height*0.23)
+       .attr("text-anchor", "middle")
+       .style("font-size", "12px")
+       .text("The growth rate is negative and more stable.");
+
     const lineGenerator = d3.line()
-        .defined(d => !isNaN(d.mortalityRateChange)) // 确保数据有效
-        .curve(d3.curveMonotoneX) // 使用MonotoneX曲线让线条平滑
+        .defined(d => !isNaN(d.mortalityRateChange))
+        .curve(d3.curveMonotoneX)
         .x(d => xScale(d.date))
         .y(d => yScale(d.mortalityRateChange));
 
-    // 绘制线条，并设置初始的 stroke-dasharray 和 stroke-dashoffset
     const path = svg.append("path")
-        .datum(filteredData) // 绑定处理后的数据
+        .datum(filteredData)
         .attr("fill", "none")
-        .attr("stroke", "#E74C3C") // 使用指定的颜色
+        .attr("stroke", "#E74C3C")
         .attr("stroke-width", 3)
         .attr("d", lineGenerator)
         .attr("stroke-dasharray", function() {
-            const length = this.getTotalLength(); // 获取线条的总长度
-            return `${length} ${length}`; // 设置dasharray为线条长度
+            const length = this.getTotalLength();
+            return `${length} ${length}`;
         })
         .attr("stroke-dashoffset", function() {
-            return this.getTotalLength(); // 初始偏移量为线条长度
+            return this.getTotalLength();
         });
 
-    // 应用动画，逐渐将 stroke-dashoffset 减少到 0
     path.transition()
-        .duration(3000) // 动画持续时间
-        .attr("stroke-dashoffset", 0);
+        .duration(3000)
+        .attr("stroke-dashoffset", 0)
+        .on('end', () => {
+            setTimeout(() => {
+                renderLineChartWithMortalityRateChange(); // 重复动画
+            }, 2000); // 2秒后重复
+        });
   }
-
 
   // 进度条的更新设置 <<---------
   $: selectedDateString = dates[selectedDateIndex]; // 先更新selectedDateString
@@ -1005,7 +1043,8 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h2>Since March 23, 2023, USCIS announced the termination of COVID-related flexibilities, signaling that the United States will cease the collection and publication of data related to COVID-19 thereafter. <br> However, does this mean COVID-19 has truly left us behind, or is it no longer worthy of our attention and vigilance?</h2>
+    <h2>Since March 23, 2023, USCIS announced the termination of COVID-related flexibilities, signaling that the United States will cease the collection and publication of data related to COVID-19 thereafter.</h2>
+    <h2>However, does this mean COVID-19 has truly left us behind, or is it no longer worthy of our attention and vigilance?</h2>
   </div>
 
   <div class="image-container">
@@ -1132,11 +1171,6 @@
       <a href="https://www.cdc.gov/coronavirus/2019-ncov/long-term-effects/index.html" target="_blank">Long COVID</a>
     </div>
   </div>
-
-  <div class="text-box" style="text-align: left;">
-    <h2>What can We do?</h2>
-    <h3>xxx</h3>
-  </div>
 </div>
 
 <div id="tooltip" style="display: none; position: absolute; padding: 8px; background: rgba(255, 255, 255, 0.85); border: none; border-radius: 5px; pointer-events: none;">Tooltip</div>
@@ -1185,7 +1219,7 @@
     height: 100vh; /* 设置高度占满整个视口高度 */
     width: 98vw; /* 设置宽度占满整个视口宽度 */
     margin: 0; /* 移除外边距 */
-    padding: 0; /* 调整内边距，如果需要的话 */
+    padding: 0; 
     font-family: 'Oswald', sans-serif;
     opacity: 0;
     transition: opacity 1s ease-out; /* 如果你想要更长时间的淡入效果 */
@@ -1202,23 +1236,12 @@
       font-weight: 500; /* Oswald的常规权重 */
   }
 
-  .title-box h3 {
-      font-size: 1.5rem; /* 根据需要调整副标题的大小 */
-      font-weight: 500; /* Oswald的常规权重 */
-  }
-
-
   .text-box {
     width: 70%; /* 与可视化组件宽度一致 */
     text-align: center; /* 文本居中 */
     font-family: 'Oswald', sans-serif;
     opacity: 0;
     transform: translateX(-100%);
-  }
-
-  .text-box h1 {
-      font-size: 1.5rem; /* 根据需要调整副标题的大小 */
-      font-weight: 500; /* Oswald的常规权重 */
   }
 
   .text-box h2 {
@@ -1305,10 +1328,10 @@
   }
 
   .image-item img {
-    width: auto; /* 根据需要调整宽度 */
+    width: auto; /* 调整宽度 */
     height: 35vh; /* 保持图片高度一致 */
     object-fit: cover; /* 裁剪图片以填充容器 */
-    border-radius: 10px; /* 如需要，为图片添加圆角 */
+    border-radius: 10px; /* 添加圆角 */
     margin-bottom: 0.5rem; /* 图片与文字说明之间的间隔 */
   }
 
