@@ -444,7 +444,7 @@
 
   //绘制折线图的代码 <<---------
   function renderLineChart(selectedState) {
-    const margin = { top: 20, right: 80, bottom: 50, left: 80 },
+    const margin = { top: 30, right: 80, bottom: 50, left: 80 },
           width = svg2.clientWidth - margin.left - margin.right,
           height = svg2.clientHeight - margin.top - margin.bottom;
 
@@ -491,6 +491,15 @@
     svg.append("g")
       .attr("transform", `translate(${width}, 0)`)
       .call(yAxisRight);
+    
+    // 添加标题
+  svg.append("text")
+    .attr("x", width / 2) // 将标题置于图表的中心
+    .attr("y", 0 - (margin.top / 2)) // 在上边距的一半位置放置标题
+    .attr("text-anchor", "middle") // 确保标题在其指定位置水平居中
+    .style("font-size", "13px") // 设置标题的字体大小
+    
+    .text("COVID-19 Infection Trends and Mortality Rate Over Time");
 
     // 添加横向的虚线
     // 绘制y轴网格线作为背景
@@ -1044,7 +1053,7 @@
 
   <div class="text-box" style="text-align: left;">
     <h2>Since March 23, 2023, USCIS announced the termination of COVID-related flexibilities, signaling that the United States will cease the collection and publication of data related to COVID-19 thereafter.</h2>
-    <h2>However, does this mean COVID-19 has truly left us behind, or is it no longer worthy of our attention and vigilance?</h2>
+    <h2>However, does this mean COVID-19 has truly left us behind, or is it no longer worthy of our attention and vigilance? Have the viruses that we once guarded against so vigilantly, expending vast amounts of human and financial resources, simply vanished without a trace?💨</h2>
   </div>
 
   <div class="image-container">
@@ -1126,7 +1135,7 @@
   </div>
 
   <div class="visualization">
-    <svg bind:this={svg2} width="100%" height="98%"></svg>
+    <svg id="svg2" bind:this={svg2} width="100%" height="98%"></svg>
   </div>
   
   <div class="text-box" style="text-align: left;">
@@ -1156,7 +1165,7 @@
   </div>
 
   <div class="text-box" style="text-align: left;">
-    <h3>On the other hand, we must remain vigilant, as the current threat posed by COVID-19 to human health is significantly greater than that of the common seasonal flu🦠. In comparison, COVID-19 has a mortality rate that far exceeds that of seasonal influenza. Furthermore, the impact of COVID-19 on the human body is formidable. Long COVID😷 continues to erode people's health persistently. Moreover, as a coronavirus, COVID-19's potential for mutation is much higher than that of viruses with simpler structures, introducing greater uncertainty into the efficacy of vaccines.</h3>
+    <h3>On the other hand, we must remain vigilant, as the current threat posed by COVID-19 to human health is significantly greater than that of the common seasonal flu🦠 <a href="#svg2"> C19-IMR</a>. In comparison, COVID-19 has a mortality rate that far exceeds that of seasonal influenza. Furthermore, the impact of COVID-19 on the human body is formidable. Long COVID😷 continues to erode people's health persistently. Moreover, as a coronavirus, COVID-19's potential for mutation is much higher than that of viruses with simpler structures, introducing greater uncertainty into the efficacy of vaccines.</h3>
   </div>
 
   <div class="image-container">
